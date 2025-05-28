@@ -12,23 +12,20 @@
 
   <title>홈 | 안면근육 재활</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=SUIT:wght@400;600&display=swap" rel="stylesheet">
-
   <style>
     html, body {
       margin: 0;
       padding: 0;
-      font-family: 'SUIT', sans-serif;
-      background-color: white;
-      color: #333;
-      overflow: hidden;
       height: 100%;
+      overflow-x: hidden;
+      box-sizing: border-box;
     }
 
     body {
-      display: flex;
-      flex-direction: row;
-      width: 100vw;
-      height: 100dvh;
+      font-family: 'SUIT', sans-serif;
+      background-color: white;
+      color: #333;
+      text-align: center;
       transition: opacity 0.4s ease;
     }
 
@@ -40,111 +37,88 @@
       opacity: 0;
     }
 
-    header {
-      position: absolute;
-      top: 0;
-      width: 100%;
-      padding: 20px 0;
-      font-family: 'Orbitron', sans-serif;
-      background: linear-gradient(90deg, #69b7ff, #a17fff);
-      font-size: 24px;
-      font-weight: bold;
-      color: white;
-      text-align: center;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-      z-index: 1;
-    }
+  header {
+    position: static; /* absolute 제거 */
+    width: 100%;
+    background: linear-gradient(90deg, #69b7ff, #a17fff);
+    color: white;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 24px;
+    font-weight: bold;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    z-index: 10;
+  }
+
+  h2 {
+    position: static;
+    font-size: 20px;
+    margin: 20px auto 0;
+    text-align: center;
+  }
 
     .button-group {
       display: flex;
       flex-direction: row;
       justify-content: center;
       align-items: center;
-      gap: 60px;
-      margin: auto;
-      width: 100%;
-      max-width: 900px;
+      gap: 40px;
+      flex-wrap: wrap;
+      padding: 0 20px;
     }
 
     .mode-box {
-      width: 280px;
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
+      width: 40vw;
+      height: 60vh;
       border-radius: 16px;
+      overflow: hidden;
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-      padding: 20px;
-      color: white;
       display: flex;
       flex-direction: column;
-      align-items: center;
       justify-content: space-between;
-      transition: transform 0.3s, box-shadow 0.3s;
-    }
-
-    .mode-box:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+      align-items: center;
+      padding: 10px;
     }
 
     .mode-box img {
       width: 100%;
-      max-height: 160px;
-      object-fit: contain;
-      border-radius: 12px;
-      margin-bottom: 16px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      height: 80%;
+      object-fit: cover;
     }
 
-    .mode-left {
-      background-image: linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.5)), url('static/images/space.png');
-    }
-
-    .mode-right {
-      background-image: linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.5)), url('static/images/grass.png');
-    }
-
-    .mode-left button,
-    .mode-right button {
-      background-color: rgba(0, 0, 0, 0.5);
+    .mode-box button {
+      width: 90%;
+      padding: 12px;
+      font-size: 16px;
+      font-weight: bold;
       color: white;
       border: none;
-      padding: 12px 24px;
-      font-size: 16px;
-      font-weight: 700;
       border-radius: 8px;
       cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-      transition: background-color 0.3s, transform 0.2s;
     }
 
-    .mode-left button:hover {
-      background-color: rgba(100, 30, 180, 0.9);
-      transform: scale(1.05);
+    .mode-left button {
+      background-color: rgba(138, 43, 226, 0.85);
     }
 
-    .mode-right button:hover {
-      background-color: rgba(46, 125, 50, 1);
-      transform: scale(1.05);
+    .mode-right button {
+      background-color: rgba(56, 142, 60, 0.9);
     }
 
     .home-button {
       position: fixed;
-      top: 20px;
-      left: 20px;
-      z-index: 999;
-      padding: 10px 20px;
+      top: 16px;
+      left: 16px;
       background: #ff4081;
       color: white;
-      text-decoration: none;
-      border-radius: 8px;
+      padding: 8px 16px;
       font-weight: bold;
-      box-shadow: 0 0 10px #ff4081;
-    }
-
-    .home-button:hover {
-      background: #e91e63;
-      box-shadow: 0 0 15px #ff4081;
+      border-radius: 6px;
+      box-shadow: 0 0 8px #ff4081;
+      z-index: 999;
+      text-decoration: none;
+      font-size: 14px;
     }
   </style>
 </head>
@@ -154,6 +128,7 @@
 
   <div id="app">
     <header>SMILE FIT</header>
+    <h2>원하는 모드를 선택하세요</h2>
     <div class="button-group">
       <div class="mode-box mode-left">
         <img src="static/images/game.png" alt="게임 모드 이미지">
@@ -205,9 +180,7 @@
       const path = routes[route];
       if (!path) return;
 
-      if (currentModule?.cleanup) {
-        currentModule.cleanup();
-      }
+      if (currentModule?.cleanup) currentModule.cleanup();
 
       document.body.classList.remove('loaded');
       document.body.classList.add('fade-out');
@@ -220,9 +193,8 @@
           temp.innerHTML = html;
           document.getElementById('app').innerHTML = temp.innerHTML;
 
-          const scriptPath = `scripts/${route}.js`;
           try {
-            const module = await import(`/${scriptPath}`);
+            const module = await import(`/scripts/${route}.js`);
             currentModule = module;
             if (module?.init) module.init();
           } catch (e) {

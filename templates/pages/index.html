@@ -1,37 +1,41 @@
 <style>
-  html, body {
-    margin: 0;
-    padding: 0;
-    font-family: 'SUIT', sans-serif;
-    background-color: white;
-    color: #333;
-    overflow: hidden;
-  }
-
   .home-page {
-    width: 100vw;
-    height: 100dvh;
     display: flex;
-    flex-direction: row; /* 좌우 배치 고정 */
-    justify-content: space-around;
+    flex-direction: row;
+    justify-content: center;
     align-items: center;
+    height: 100dvh;
+    overflow: hidden;
     box-sizing: border-box;
     padding: 20px;
+    gap: 40px;
+    background-color: white;
+    font-family: 'SUIT', sans-serif;
+    color: #333;
   }
 
   header {
     position: absolute;
     top: 0;
     width: 100%;
-    padding: 20px 0;
-    font-family: 'Orbitron', sans-serif;
     background: linear-gradient(90deg, #69b7ff, #a17fff);
+    color: white;
+    font-family: 'Orbitron', sans-serif;
     font-size: 24px;
     font-weight: bold;
-    color: white;
+    padding: 20px;
     text-align: center;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    z-index: 1;
+    z-index: 10;
+  }
+
+  h2 {
+    position: absolute;
+    top: 70px;
+    width: 100%;
+    font-size: 20px;
+    text-align: center;
+    margin: 0;
+    margin-top: 40px;
   }
 
   .button-group {
@@ -40,78 +44,76 @@
     gap: 40px;
     align-items: center;
     justify-content: center;
-    flex-wrap: nowrap;
-    width: 100%;
-    max-width: 900px;
-    margin-top: 60px;
+    margin-top: 120px;
   }
 
   .mode-box {
-    width: 300px;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+    width: 40vw;
+    height: 60vh;
     border-radius: 16px;
+    overflow: hidden;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-    padding: 20px;
-    color: white;
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: space-between;
-    transition: transform 0.3s, box-shadow 0.3s;
-  }
-
-  .mode-box:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+    align-items: center;
   }
 
   .mode-box img {
     width: 100%;
-    max-height: 180px;
-    object-fit: contain;
-    border-radius: 12px;
-    margin-bottom: 16px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    height: 80%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .mode-box button {
+    width: 90%;
+    padding: 12px;
+    margin-bottom: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
   }
 
   .mode-left {
-    background-image: linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.5)), url('static/images/space.png');
+    background-color: rgba(138, 43, 226, 0.85);
+  }
+
+  .mode-left button {
+    background-color: rgba(138, 43, 226, 0.85);
   }
 
   .mode-right {
-    background-image: linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.5)), url('static/images/grass.png');
+    background-color: rgba(56, 142, 60, 0.9);
   }
 
-  .mode-left button,
   .mode-right button {
-    background-color: rgba(0, 0, 0, 0.5);
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    font-size: 16px;
-    font-weight: 700;
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-    transition: background-color 0.3s, transform 0.2s;
+    background-color: rgba(56, 142, 60, 0.9);
   }
 
-  .mode-left button:hover {
-    background-color: rgba(100, 30, 180, 0.9);
-    transform: scale(1.05);
-  }
-
-  .mode-right button:hover {
-    background-color: rgba(46, 125, 50, 1);
-    transform: scale(1.05);
-  }
-
+      .home-button {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      background: #ff4081;
+      color: white;
+      padding: 8px 16px;
+      font-weight: bold;
+      border-radius: 6px;
+      box-shadow: 0 0 8px #ff4081;
+      z-index: 999;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    
 </style>
 
 <section class="home-page">
   <header>SMILE FIT</header>
+  <h2>원하는 모드를 선택하세요</h2>
   <div class="button-group">
     <div class="mode-box mode-left">
       <img src="static/images/game.png" alt="게임 모드">
