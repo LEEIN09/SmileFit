@@ -1,17 +1,15 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#ffffff">
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#ffffff" />
+  <link rel="manifest" href="/manifest.json" />
 
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
 
-  <meta charset="UTF-8">
   <title>홈 | 안면근육 재활</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=SUIT:wght@400;600&display=swap" rel="stylesheet">
   <style>
@@ -20,7 +18,7 @@
       padding: 0;
       height: 100%;
       overflow-x: hidden;
-      overflow-y: auto; /* 스크롤 허용 */
+      overflow-y: auto;
       box-sizing: border-box;
     }
 
@@ -28,7 +26,6 @@
       display: flex;
       flex-direction: column;
       min-height: 100vh;
-      margin: 0;
       font-family: 'SUIT', sans-serif;
       background-color: white;
       color: #333;
@@ -59,20 +56,17 @@
       display: flex;
       flex-direction: column;
       justify-content: center;
-      overflow-y: auto;
-      box-sizing: border-box;
-      padding: 20px; /* 필요 시 추가 */
+      padding: 20px;
     }
 
     h2 {
       font-family: 'SUIT', sans-serif;
-      font-size: 26px;
+      font-size: clamp(18px, 5vw, 26px);
       font-weight: 600;
       color: #222;
       letter-spacing: 0.5px;
       text-shadow: 0 2px 4px rgba(0,0,0,0.06);
-      margin-bottom: 50px;
-      margin: 40px 0 50px;
+      margin: 24px 0 40px;
     }
 
     .button-group {
@@ -106,13 +100,13 @@
     .mode-box img {
       width: 100%;
       height: auto;
+      max-height: 200px;
       border-radius: 12px;
       margin-bottom: 16px;
       object-fit: cover;
       box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     }
 
-    /* 우주 배경 (왼쪽) + 투명 오버레이 */
     .mode-left {
       background-image: linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.5)), url('static/images/space.png');
     }
@@ -135,7 +129,6 @@
       transform: scale(1.05);
     }
 
-    /* 잔디 배경 (오른쪽) + 투명 오버레이 */
     .mode-right {
       background-image: linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.5)), url('static/images/grass.png');
     }
@@ -181,45 +174,52 @@
       .button-group {
         flex-direction: column;
         gap: 40px;
+        align-items: center;
       }
 
       .mode-box {
-        width: 80%;
-        margin: auto;
+        width: 90%;
+        max-width: 320px;
+        padding: 16px;
+      }
+
+      header {
+        font-size: 20px;
+        padding: 20px;
+      }
+
+      .mode-box img {
+        max-height: 160px;
       }
     }
   </style>
 </head>
 <body>
-
   <audio id="metal_click" src="/static/sounds/metal_click.mp3"></audio>
   <audio id="click_sound" src="/static/sounds/click_sound.wav"></audio>
-  <!-- <header>SMILE FIT</header> -->
-  
+
   <div id="app">
     <header>SMILE FIT</header>
     <h2>원하는 모드를 선택하세요</h2>
-      <div class="button-group">
-        <div class="mode-box mode-left">
-          <img src="static/images/game.png" alt="게임 모드 이미지">
-          <button onclick="metalClickSound(); loadPage('game_mode')">게임 모드</button>
-        </div>
-        <div class="mode-box mode-right">
-          <img src="static/images/rehab.png" alt="재활 모드 이미지">
-          <button onclick="ClickSound(); loadPage('rehab_mode')">재활 모드</button>
-        </div>
+    <div class="button-group">
+      <div class="mode-box mode-left">
+        <img src="static/images/game.png" alt="게임 모드 이미지">
+        <button onclick="metalClickSound(); loadPage('game_mode')">게임 모드</button>
+      </div>
+      <div class="mode-box mode-right">
+        <img src="static/images/rehab.png" alt="재활 모드 이미지">
+        <button onclick="ClickSound(); loadPage('rehab_mode')">재활 모드</button>
       </div>
     </div>
+  </div>
 
-    <a href="#" class="home-button" onclick="loadPage('index'); return false;">HOME</a>
-  
+  <a href="#" class="home-button" onclick="loadPage('index'); return false;">HOME</a>
 
   <script>
     window.addEventListener('DOMContentLoaded', () => {
       document.body.classList.add('loaded');
-      loadPage('index');  // 최초 진입 시 pages/index.html 불러오기
+      loadPage('index');
     });
-
 
     function metalClickSound() {
       const sound = document.getElementById('metal_click');
@@ -227,75 +227,73 @@
       sound.play();
     }
 
-        function ClickSound() {
+    function ClickSound() {
       const sound = document.getElementById('click_sound');
       sound.currentTime = 0;
       sound.play();
     }
 
+    const routes = {
+      'index': '/pages/index.html',
+      'game_follow': '/pages/game_follow.html',
+      'game_mode': '/pages/game_mode.html',
+      'game_emotion': '/pages/game_emotion.html',
+      'rehab_mode': '/pages/rehab_mode.html',
+      'complex': '/pages/complex.html',
+      'complex_fit': '/pages/complex_fit.html',
+      'focus': '/pages/focus.html',
+      'focus_fit': '/pages/focus_fit.html',
+      'feedback': '/pages/feedback.html'
+    };
 
-      const routes = {
-        'index': '/pages/index.html',
-        'game_follow': '/pages/game_follow.html',
-        'game_mode': '/pages/game_mode.html',
-        'game_emotion': '/pages/game_emotion.html',
-        'rehab_mode':'/pages/rehab_mode.html',
-        'complex': '/pages/complex.html',
-        'complex_fit': '/pages/complex_fit.html',
-        'focus': '/pages/focus.html',
-        'focus_fit': '/pages/focus_fit.html',
-        'feedback': '/pages/feedback.html'
-      };
+    let currentModule = null;
 
-      let currentModule = null;
+    async function loadPage(route) {
+      const path = routes[route];
+      if (!path) return;
 
-      async function loadPage(route) {
-        const path = routes[route];
-        if (!path) return;
+      if (currentModule?.cleanup) {
+        currentModule.cleanup();
+      }
 
-        if (currentModule?.cleanup) {
-          currentModule.cleanup();
-        }
+      document.body.classList.remove('loaded');
+      document.body.classList.add('fade-out');
 
-        document.body.classList.remove('loaded');
-        document.body.classList.add('fade-out');
+      setTimeout(async () => {
+        try {
+          const res = await fetch(path);
+          const html = await res.text();
 
-        setTimeout(async () => {
+          const temp = document.createElement('div');
+          temp.innerHTML = html;
+
+          document.getElementById('app').innerHTML = temp.innerHTML;
+
+          const scriptPath = `scripts/${route}.js`;
           try {
-            const res = await fetch(path);
-            const html = await res.text();
-
-            const temp = document.createElement('div');
-            temp.innerHTML = html;
-
-            document.getElementById('app').innerHTML = temp.innerHTML;
-
-            // ✅ JS 모듈 파일 동적 import
-            const scriptPath = `scripts/${route}.js`;
-            try {
-              const module = await import(`/${scriptPath}`);
-              currentModule = module;  
-              if (module?.init) module.init();
-            } catch (e) {
-              console.warn(`⚠️ ${route}.js 없음 또는 import 실패`, e);
-            }
-
-            document.body.classList.remove('fade-out');
-            document.body.classList.add('loaded');
+            const module = await import(`/${scriptPath}`);
+            currentModule = module;
+            if (module?.init) module.init();
           } catch (e) {
-            console.error('❌ 페이지 로딩 실패:', e);
+            console.warn(`⚠️ ${route}.js 없음 또는 import 실패`, e);
           }
-        }, 400);
-      }
-      if ("serviceWorker" in navigator) {
-        window.addEventListener("load", () => {
-          navigator.serviceWorker
-            .register("/serviceWorker.js")
-            .then(() => console.log("✅ Service Worker registered"))
-            .catch((err) => console.error("❌ Service Worker registration failed:", err));
-        });
-      }
-  </script>
 
+          document.body.classList.remove('fade-out');
+          document.body.classList.add('loaded');
+        } catch (e) {
+          console.error('❌ 페이지 로딩 실패:', e);
+        }
+      }, 400);
+    }
+
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker
+          .register("/serviceWorker.js")
+          .then(() => console.log("✅ Service Worker registered"))
+          .catch((err) => console.error("❌ Service Worker registration failed:", err));
+      });
+    }
+  </script>
 </body>
 </html>
