@@ -1,0 +1,18 @@
+<section class="min-h-screen bg-gray-900 text-cyan-200 p-6 text-center">
+  <h2 class="text-2xl font-bold mb-6">게임 결과 피드백</h2>
+
+  <div class="max-w-xl mx-auto bg-gray-800 p-6 rounded-xl shadow-md space-y-4">
+    <div class="text-lg">총 점수: <span id="totalScore" class="font-bold">0</span>점</div>
+    <div class="text-lg">등급: <span id="grade" class="font-bold">-</span></div>
+    <div class="text-base">피드백: <span id="feedbackText">좋은 시도였어요! 더 연습해볼까요?</span></div>
+  </div>
+
+  <div class="mt-8 flex flex-col sm:flex-row justify-center gap-4">
+    <button onclick="navigate('game_mode')" class="px-6 py-3 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-500">
+      다시하기
+    </button>
+    <button onclick="navigate('')" class="px-6 py-3 bg-cyan-600 text-white font-semibold rounded-xl hover:bg-cyan-500">
+      홈으로
+    </button>
+  </div>
+</section>

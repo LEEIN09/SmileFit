@@ -1,0 +1,166 @@
+<style>
+  body {
+    opacity: 0;
+    transition: opacity 0.8s ease;
+    font-family: 'Orbitron', sans-serif;
+    background: radial-gradient(ellipse at center, #0f2027, #203a43, #2c5364);
+    color: #00ffe1;
+    text-align: center;
+    margin: 0;
+    padding: 40px;
+    overflow-x: hidden;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  body.loaded {
+    opacity: 1;
+  }
+
+  body.fade-out {
+    opacity: 0;
+  }
+
+    header {
+      font-family: 'Orbitron', sans-serif;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 30px;
+      font-size: 28px;
+      font-weight: bold;
+      color: #00ffe1;
+      box-shadow: 0 0 20px #00ffe1;
+    }
+
+  h2 {
+    font-size: 22px;
+    color: #00ffe1; /* 민트색 */
+    margin-bottom: 10px;
+    margin-top: 0px;
+    text-shadow: 0 0 10px #00ffe1;
+  }
+
+  #roundDisplay {
+    font-size: 24px;
+    color: #ffffff;
+    margin-bottom: 0px;
+    text-shadow: 0 0 6px #00ffe1;
+  }
+
+  .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 40px;
+    gap: 30px;
+    flex-wrap: wrap;
+  }
+
+  img, video, canvas {
+    width: 300px;
+    height: 225px;
+    border: 2px solid #00ffe1;
+    box-shadow: 0 0 10px #00ffe1;
+  }
+
+  video.input_video {
+    transform: scaleX(-1);
+  }
+
+  canvas#guideCanvas {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 0;
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  #refEmotionDisplay,
+  #userEmotionDisplay,
+  #scoreDisplay {
+    font-size: 18px;
+    margin-top: 10px;
+    text-shadow: 0 0 5px #00ffe1;
+  }
+
+  button {
+    margin-top: 20px;
+    padding: 12px 24px;
+    font-size: 16px;
+    border: 2px solid #00ffe1;
+    background: transparent;
+    color: #00ffe1;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 0 10px #00ffe1;
+    transition: all 0.3s ease;
+  }
+
+  button:hover {
+    background-color: #00ffe133;
+    box-shadow: 0 0 15px #00ffe1;
+    transform: scale(1.05);
+  }
+    .title-row {
+      display: flex;
+      align-items: baseline; /* 또는 center, baseline 시도해보기 */
+      justify-content: center;
+      gap: 100px;
+      margin-top: 0px;
+      margin-bottom: 0px;
+    }
+
+    .title-row h2{
+      color: #00ffe1;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 24px;
+      line-height: 1;
+      margin: 0; /* 기본 h2 margin 제거 */
+      padding: 0;
+    }
+
+  @media (max-width: 700px) {
+    .container {
+      flex-direction: column;
+      gap: 20px;
+    }
+  }
+    #score, #totalScore {
+      font-size: 18px;
+      margin-top: 20px;
+      text-shadow: 0 0 5px #00ffe1;
+    }
+    .score-row {
+      display: flex;
+      justify-content: center; /* 가운데 정렬 */
+      gap: 120px; /* 항목 간격 */
+      margin: 0px 0;
+      font-size: 18px;
+    }
+
+</style>
+
+  <div class="title-row">
+    <h2>감정 표현하기 게임</h2>
+    <div id="roundDisplay">1 / 25 라운드</div>
+  </div>
+
+<div class="container">
+  <div>
+    <img id="referenceImg" src="" alt="기준 감정 이미지">
+    <div id="refEmotionDisplay">기준 감정: -</div>
+  </div>
+  <div style="position: relative;">
+    <video id="video" class="input_video" autoplay muted playsinline></video>
+    <canvas id="guideCanvas" width="300" height="225"></canvas>
+    <div id="userEmotionDisplay">당신 감정: -</div>
+  </div>
+</div>
+
+<button id="captureBtn">📸 감정 표정 제출</button>
+  <div class="score-row">
+    <div id="score">이번 점수: -</div>
+    <div id="totalScore">총점: 0 / 250</div>
+  </div>

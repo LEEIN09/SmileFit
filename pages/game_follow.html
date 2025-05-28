@@ -1,0 +1,27 @@
+<section class="min-h-screen bg-gray-900 text-cyan-200 p-4 text-center">
+  <h2 class="text-xl font-semibold mb-4">표정 따라하기 모드</h2>
+  <div id="round" class="text-lg mb-4">라운드: 1 / 25</div>
+
+  <div class="flex flex-col md:flex-row justify-center items-center gap-6 mb-6">
+    <!-- 기준 이미지 -->
+    <div class="w-full md:w-1/3">
+      <h3 class="mb-2">기준 이미지</h3>
+      <img id="referenceImg" src="" alt="기준 이미지" class="mx-auto border-2 border-cyan-400 rounded-lg w-60 h-45">
+    </div>
+
+    <!-- 사용자 캠 -->
+    <div class="w-full md:w-1/3 relative">
+      <h3 class="mb-2">당신의 얼굴</h3>
+      <video id="video" autoplay playsinline class="mx-auto rounded-lg border border-cyan-300"></video>
+      <canvas id="guideCanvas" width="300" height="225" class="absolute top-0 left-1/2 transform -translate-x-1/2"></canvas>
+    </div>
+  </div>
+
+  <!-- 하단 버튼 및 점수 -->
+  <div class="space-y-4">
+    <button id="captureBtn" class="px-6 py-3 text-white bg-cyan-600 hover:bg-cyan-500 rounded-xl font-bold">
+      캡처하기
+    </button>
+    <div id="scoreDisplay" class="text-lg">점수: -</div>
+  </div>
+</section>

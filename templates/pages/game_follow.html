@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>표정 따라하기 모드 | SMILE FIT</title>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+  <style>
+    body {
+      opacity: 0;
+      transition: opacity 0.8s ease;
+      margin: 0;
+      font-family: 'SUIT', sans-serif;
+      background: radial-gradient(ellipse at center, #0f2027, #203a43, #2c5364);
+      color: #00ffe1;
+      text-align: center;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    body.loaded {
+      opacity: 1;
+    }
+    
+    body.fade-out {
+      opacity: 0;
+    }
+
+    header {
+      font-family: 'Orbitron', sans-serif;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 30px;
+      font-size: 28px;
+      font-weight: bold;
+      color: #00ffe1;
+      box-shadow: 0 0 20px #00ffe1;
+    }
+
+    h2 {
+      font-size: 22px;
+      color: #00ffe1; /* 민트색 */
+      margin-bottom: 10px;
+      text-shadow: 0 0 10px #00ffe1;
+    }
+
+    #round {
+      font-size: 24px;
+      color: #ffffff;
+      margin-bottom: 30px;
+      text-shadow: 0 0 6px #00ffe1;
+    }
+
+    .container {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+
+    img, video, canvas {
+      width: 300px;
+      height: 225px;
+      border: 2px solid #00ffe1;
+      box-shadow: 0 0 10px #00ffe1;
+    }
+
+    video.input_video {
+      transform: scaleX(-1);
+    }
+
+    canvas#guideCanvas {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      top: 0;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    button {
+      margin: 10px;
+      padding: 12px 24px;
+      font-size: 16px;
+      border: 2px solid #00ffe1;
+      background: transparent;
+      color: #00ffe1;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 0 10px #00ffe1;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #00ffe133;
+      box-shadow: 0 0 15px #00ffe1;
+      transform: scale(1.05);
+    }
+
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        box-shadow: none !important;  /* 빛나는 효과 제거 */
+        background: transparent;
+      }
+
+    #score, #totalScore {
+      font-size: 18px;
+      margin-top: 20px;
+      text-shadow: 0 0 5px #00ffe1;
+    }
+
+
+    @media (max-width: 700px) {
+      .container {
+        flex-direction: column;
+        gap: 20px;
+      }
+    }
+
+    .score-row {
+      display: flex;
+      justify-content: center; /* 가운데 정렬 */
+      gap: 120px; /* 항목 간격 */
+      margin: 10px 0;
+      font-size: 18px;
+    }
+
+    .title-row {
+      display: flex;
+      align-items: baseline; /* 또는 center, baseline 시도해보기 */
+      justify-content: center;
+      gap: 100px;
+      margin-top: 30px;
+      margin-bottom: 30px;
+    }
+
+    .title-row h2{
+      color: #00ffe1;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 24px;
+      line-height: 1;
+      margin: 0; /* 기본 h2 margin 제거 */
+      padding: 0;
+    }
+  </style>
+</head>
+<body>
+
+
+  <div class="title-row">
+    <h2>표정 따라하기 게임</h2>
+    <div id="round">1 / 25 라운드</div>
+  </div>
+
+  <div class="container">
+    <img id="imageA" src="" alt="표정1">
+    <div style="position: relative;">
+      <video class="input_video" autoplay muted playsinline></video>
+      <canvas id="guideCanvas" width="300" height="225"></canvas>
+    </div>
+    <img id="imageB" src="" alt="표정2">
+  </div>
+
+  <canvas class="output_canvas" width="300" height="225" style="display:none"></canvas>
+
+  <button id="captureA">1️⃣ 첫 번째 표정 따라하기</button>
+  <button id="captureB" disabled>2️⃣ 두 번째 표정 따라하기</button>
+  
+  <div class="score-row">
+    <div id="score">이번 점수: -</div>
+    <div id="totalScore">총점: 0 / 250</div>
+  </div>
+
+  
+</body>
+</html>

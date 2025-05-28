@@ -1,0 +1,46 @@
+<style>
+    @media (max-width: 600px) {
+  .button-group {
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+  }
+
+  .mode-box {
+    width: 80%;
+  }
+
+  .home-page h2 {
+    font-size: 18px;
+  }
+
+  .mode-box img {
+    height: auto;
+    max-height: 200px; /* 너무 큰 이미지 제한용 */
+    object-fit: cover;
+  }
+
+  .home-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+}
+
+</style>
+
+<section class="home-page">
+<header>SMILE FIT</header>
+  <h2>안면근육 재활 서비스에 오신 걸 환영합니다</h2>
+  <div class="button-group">
+    <div class="mode-box mode-left">
+      <img src="static/images/game.png" alt="게임 모드">
+      <button onclick="metalClickSound(); loadPage('game_mode')">게임 모드</button>
+    </div>
+    <div class="mode-box mode-right">
+      <img src="static/images/rehab.png" alt="재활 모드">
+      <button onclick="ClickSound(); loadPage('rehab_mode')">재활 모드</button>
+    </div>
+  </div>
+</section>

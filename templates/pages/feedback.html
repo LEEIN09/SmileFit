@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>피드백 | SMILE FIT</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=SUIT:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'SUIT', sans-serif;
+      background-color: white;
+      color: #333;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: stretch;
+    }
+
+    body.loaded {
+      opacity: 1;
+    }
+
+    header {
+      font-family: 'Orbitron', sans-serif;
+      background: linear-gradient(90deg, #69b7ff, #a17fff);
+      padding: 30px;
+      font-size: 28px;
+      font-weight: bold;
+      color: white;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      text-align: center;
+    }
+
+    .home-button {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 999;
+      padding: 10px 20px;
+      background: #ff4081;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: bold;
+      box-shadow: 0 0 10px #ff4081;
+    }
+
+    .home-button:hover {
+      background: #e91e63;
+      box-shadow: 0 0 15px #ff4081;
+    }
+
+    .content-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 60px;
+      padding: 40px;
+      flex-wrap: wrap;
+    }
+
+    .image-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px 10px;
+      width: 500px;
+    }
+
+    .image-grid img {
+      width: 100%;
+      height: auto;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+    }
+
+    .email-box {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      width: 300px;
+    }
+
+    .email-box input,
+    .email-box button {
+      padding: 12px;
+      font-size: 16px;
+    }
+
+    .email-box button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 600px) {
+      .content-wrapper {
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+        gap: 40px;
+      }
+
+      .image-grid {
+        width: 90vw;
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .email-box {
+        width: 90vw;
+      }
+
+      .email-box input,
+      .email-box button {
+        font-size: 15px;
+        padding: 10px;
+      }
+    }
+
+  </style>
+</head>
+<body>
+
+  <header>SMILE FIT</header>
+
+  <div class="content-wrapper">
+    <div class="image-grid" id="imageGrid"></div>
+
+    <div class="email-box">
+      <h3>결과 이메일로 받기</h3>
+      <input type="email" id="emailInput" placeholder="이메일 주소 입력">
+      <button onclick="sendEmail()">이메일 전송</button>
+      <div id="status"></div>
+    </div>
+  </div>
+
+</body>
+</html>

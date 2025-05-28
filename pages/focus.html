@@ -1,0 +1,32 @@
+<section class="min-h-screen bg-white text-center p-6 text-gray-800">
+  <h2 class="text-2xl font-bold mb-10">집중운동을 선택하세요</h2>
+
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-5xl mx-auto">
+    <!-- 입 벌리기 -->
+    <div class="border rounded-xl p-4 shadow hover:shadow-lg">
+      <p class="text-sm text-gray-500 mb-2">입을 크게 벌리는 운동</p>
+      <button onclick="navigate('focus_fit?type=mouth_open')"
+        class="w-full py-4 bg-blue-500 text-white font-semibold rounded-xl hover:bg-blue-400">
+        👄 입 벌리기
+      </button>
+    </div>
+
+    <!-- 웃음 짓기 -->
+    <div class="border rounded-xl p-4 shadow hover:shadow-lg">
+      <p class="text-sm text-gray-500 mb-2">입꼬리를 올리는 웃는 표정</p>
+      <button onclick="navigate('focus_fit?type=smile')"
+        class="w-full py-4 bg-green-500 text-white font-semibold rounded-xl hover:bg-green-400">
+        😄 웃음 짓기
+      </button>
+    </div>
+
+    <!-- 찡그리기 -->
+    <div class="border rounded-xl p-4 shadow hover:shadow-lg">
+      <p class="text-sm text-gray-500 mb-2">미간을 찌푸리는 표정</p>
+      <button onclick="navigate('focus_fit?type=frown')"
+        class="w-full py-4 bg-purple-500 text-white font-semibold rounded-xl hover:bg-purple-400">
+        😠 찡그리기
+      </button>
+    </div>
+  </div>
+</section>
