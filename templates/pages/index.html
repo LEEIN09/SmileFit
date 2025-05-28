@@ -1,43 +1,117 @@
 <style>
-    @media (max-width: 600px) {
-  .button-group {
-    flex-direction: column;
+  html, body {
+    margin: 0;
+    padding: 0;
+    font-family: 'SUIT', sans-serif;
+    background-color: white;
+    color: #333;
+    overflow: hidden;
+  }
+
+  .home-page {
+    width: 100vw;
+    height: 100dvh;
+    display: flex;
+    flex-direction: row; /* 좌우 배치 고정 */
+    justify-content: space-around;
     align-items: center;
-    gap: 30px;
+    box-sizing: border-box;
+    padding: 20px;
+  }
+
+  header {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    padding: 20px 0;
+    font-family: 'Orbitron', sans-serif;
+    background: linear-gradient(90deg, #69b7ff, #a17fff);
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+  }
+
+  .button-group {
+    display: flex;
+    flex-direction: row;
+    gap: 40px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: nowrap;
+    width: 100%;
+    max-width: 900px;
+    margin-top: 60px;
   }
 
   .mode-box {
-    width: 80%;
-  }
-
-    .home-page {
-    height: 100dvh;
-    overflow: hidden;
+    width: 300px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    padding: 20px;
+    color: white;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    box-sizing: border-box;
-    padding: 16px;
-    }
-
-  .home-page h2 {
-    font-size: 18px;
+    justify-content: space-between;
+    transition: transform 0.3s, box-shadow 0.3s;
   }
 
-    .mode-box img {
+  .mode-box:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+  }
+
+  .mode-box img {
     width: 100%;
     max-height: 180px;
     object-fit: contain;
-    }
+    border-radius: 12px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  }
 
-}
+  .mode-left {
+    background-image: linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.5)), url('static/images/space.png');
+  }
+
+  .mode-right {
+    background-image: linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.5)), url('static/images/grass.png');
+  }
+
+  .mode-left button,
+  .mode-right button {
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 700;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    transition: background-color 0.3s, transform 0.2s;
+  }
+
+  .mode-left button:hover {
+    background-color: rgba(100, 30, 180, 0.9);
+    transform: scale(1.05);
+  }
+
+  .mode-right button:hover {
+    background-color: rgba(46, 125, 50, 1);
+    transform: scale(1.05);
+  }
 
 </style>
 
 <section class="home-page">
-<header>SMILE FIT</header>
-  <h2>안면근육 재활 서비스에 오신 걸 환영합니다</h2>
+  <header>SMILE FIT</header>
   <div class="button-group">
     <div class="mode-box mode-left">
       <img src="static/images/game.png" alt="게임 모드">
