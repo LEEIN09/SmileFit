@@ -3,6 +3,7 @@
   "short_name": "SMILEFIT",
   "start_url": "/",
   "display": "standalone",
+  "orientation": "landscape",
   "background_color": "#ffffff",
   "theme_color": "#69b7ff",
   "icons": [
