@@ -60,3 +60,6 @@ htmlcov/
 *.tmp
 temp_uploads/ # temp_uploads 폴더도 Git에서 제외 (임시 파일 저장용)
 temp_au_result.json # 임시 결과 파일도 제외
+
+# Firebase Service Account Key (Security!)
+serviceAccountKey.json
