@@ -18,7 +18,7 @@
   }
 
   header {
-    height: 16vh;
+    height: 14vh;
     background: linear-gradient(90deg, #69b7ff, #a17fff);
     color: white;
     font-family: 'Orbitron', sans-serif;
@@ -30,25 +30,24 @@
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   }
 
-    h2 {
-    height: 8vh; /* 🔼 좀 더 넓게 할당 */
+  h2 {
+    height: 8vh;
     font-size: 18px;
     font-weight: 600;
     display: flex;
-    align-items: flex-end; /* 텍스트 아래 정렬 */
+    align-items: center;
     justify-content: center;
-    /* line-height: 1; */
     padding-bottom: 0;
-    }
+  }
 
   .button-group {
-    height: 72vh;
+    height: 68vh;
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: flex-start;
     gap: 40px;
-    margin-bottom: 4vh;
+    margin-bottom: 10vh;
   }
 
   .mode-box {
@@ -61,7 +60,9 @@
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    padding-bottom: 2vh; 
+    padding: 4vh;
+    box-sizing: border-box;
+    gap: 3vh;
   }
 
   .mode-box img {
@@ -72,8 +73,8 @@
   }
 
   .mode-box button {
-    width: 90%;
-    padding: 12px;
+    width: 60%;
+    padding: 10px;
     font-size: 16px;
     font-weight: bold;
     color: white;
@@ -83,7 +84,11 @@
   }
 
   .mode-left {
-    background-color: rgba(138, 43, 226, 0.85);
+    background: 
+      linear-gradient(rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.5)), 
+      url('static/images/space.png');
+    background-size: cover;
+    background-position: center;
   }
 
   .mode-left button {
@@ -91,7 +96,11 @@
   }
 
   .mode-right {
-    background-color: rgba(56, 142, 60, 0.9);
+    background: 
+      linear-gradient(rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.5)), 
+      url('static/images/grass.png');
+    background-size: cover;
+    background-position: center;
   }
 
   .mode-right button {
@@ -100,17 +109,64 @@
 
   .home-button {
     position: fixed;
-    top: 16px;
+    top: 10px;
     left: 16px;
     background: #ff4081;
     color: white;
-    padding: 8px 16px;
+    padding: 4px 8px;
     font-weight: bold;
     border-radius: 6px;
     box-shadow: 0 0 8px #ff4081;
     z-index: 999;
     text-decoration: none;
     font-size: 14px;
+  }
+
+  /* 💻 데스크탑 대응 */
+  @media screen and (min-width: 768px) {
+    header {
+      height: 80px;
+      font-size: 28px;
+    }
+
+    h2 {
+      height: 60px;
+      font-size: 24px;
+    }
+
+    .button-group {
+      height: 30vh;
+      margin-top: 32px;
+      margin-bottom: 40px;
+      gap: 60px;
+    }
+
+    .mode-box {
+      width: 300px;
+      height: 280px;
+      padding: 20px;
+      gap: 10px;
+    }
+
+    .mode-box button {
+      font-size: 18px;
+      padding: 10px;
+    }
+
+    .home-button {
+      position: fixed;
+      top: 18px;
+      left: 16px;
+      background: #ff4081;
+      color: white;
+      padding: 8px 16px;
+      font-weight: bold;
+      border-radius: 6px;
+      box-shadow: 0 0 8px #ff4081;
+      z-index: 999;
+      text-decoration: none;
+      font-size: 16px;
+    }
   }
 </style>
 </head>
@@ -119,7 +175,7 @@
   <header>SMILE FIT</header>
   <h2>원하는 모드를 선택하세요</h2>
   <div class="button-group">
-    <div class="mode-box mode-left">
+    <div class="mode-box mode-left">      
       <img src="static/images/game.png" alt="게임 모드">
       <button onclick="metalClickSound(); loadPage('game_mode')">게임 모드</button>
     </div>
