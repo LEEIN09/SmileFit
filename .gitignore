@@ -1,0 +1,62 @@
+# Python virtual environments
+venv/
+.venv/
+env/
+.env/
+
+# Specific virtual environment names in your project
+venv_firebase/
+venv_mediapipe/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# C extensions
+*.so
+*.dylib
+*.dll
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+*.egg
+.installed.cfg
+
+# Unit test / coverage reports
+.coverage
+.tox/
+.nox/
+.hypothesis/
+htmlcov/
+.pytest_cache/
+
+# Editor/IDE files
+.vscode/       # VS Code configuration (optional: if you want to share settings, exclude this)
+.idea/         # PyCharm/IntelliJ IDE
+*.swp
+*~
+.DS_Store      # macOS system files
+
+# OS generated files
+.localized
+
+# Logs and temporary files
+*.log
+*.tmp
+temp_uploads/ # temp_uploads 폴더도 Git에서 제외 (임시 파일 저장용)
+temp_au_result.json # 임시 결과 파일도 제외

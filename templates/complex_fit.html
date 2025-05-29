@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>복합운동 | SMILE FIT</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=SUIT:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            margin: 0;
+            font-family: 'SUIT', sans-serif;
+            background-color: white;
+            color: #333;
+            text-align: center;
+        }
+
+        body.loaded {
+            opacity: 1;
+        }
+
+        body.fade-out {
+            opacity: 0;
+        }
+
+        header {
+            font-family: 'Orbitron', sans-serif;
+            background: linear-gradient(90deg, #69b7ff, #a17fff);
+            padding: 30px;
+            font-size: 28px;
+            font-weight: bold;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .home-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 999;
+            padding: 10px 20px;
+            background: #ff4081;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            box-shadow: 0 0 10px #ff4081;
+        }
+
+        .home-button:hover {
+            background: #e91e63;
+            box-shadow: 0 0 15px #ff4081;
+        }
+
+        .main-content {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 60px;
+            padding: 20px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .image-box, .camera-box {
+            position: relative;
+        }
+
+        .image-box img, .camera-box img, canvas { /* .camera-box img 추가 */
+            width: 320px;
+            height: 240px;
+            border-radius: 10px;
+            border: 2px solid #ccc;
+        }
+
+        .round-text {
+            font-size: 30px;
+            font-weight: bold;
+            margin: 25px 0 15px;
+        }
+        
+        #submit-btn {
+            margin-top: 20px;
+            padding: 12px 28px;
+            font-size: 16px;
+            font-weight: bold;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+        }
+
+        #submit-btn:hover {
+            background-color: #43a047;
+        }
+
+        #check-mark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 60px;
+            color: #4CAF50;
+            display: none;
+            animation: fade 1s ease forwards;
+            z-index: 1000;
+        }
+
+        /* 비디오 태그 대신 img 태그를 사용하므로 transform: scaleX(-1);은 필요 없지만,
+           만약 서버에서 반전된 이미지를 보낸다면 필요할 수 있습니다.
+           현재는 서버에서 반전된 이미지를 보내므로 필요합니다. */
+        #video-feed {
+            transform: scaleX(-1);
+        }
+
+        @keyframes fade {
+            0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 1; transform: translate(-50%, -50%) scale(1.3); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+    <header>SMILE FIT</header>
+    <a href="{{ url_for('index') }}" class="home-button">HOME</a>
+
+    <div class="round-text">ROUND <span id="round">1</span> / 10</div>
+    <div class="main-content">
+        <div class="image-box">
+            <img id="reference-img" src="" alt="기준 이미지">
+        </div>
+        <div class="camera-box">
+            <img id="video-feed" src="{{ url_for('video_feed') }}" width="320" height="240" alt="웹캠 스트림">
+            <canvas id="guide-canvas" width="320" height="240" style="position: absolute; top: 0; left: 0;"></canvas>
+        </div>
+    </div>
+
+    <button id="submit-btn">사진 제출</button>
+
+    <div id="check-mark">✅</div>
+
+    <script>
+        const videoFeedElement = document.getElementById('video-feed'); // img 태그로 변경
+        const guideCanvas = document.getElementById('guide-canvas');
+        const guideCtx = guideCanvas.getContext('2d');
+        const referenceImg = document.getElementById('reference-img');
+        const roundText = document.getElementById('round');
+        const checkMark = document.getElementById('check-mark');
+        const submitBtn = document.getElementById('submit-btn');
+
+        const TOTAL_ROUNDS = 10;
+        let currentRound = 1;
+        
+        // 서버에서 전달받은 선생님 ID
+        const teacher = "{{ teacher }}"; 
+
+        if (!teacher) {
+            alert("선생님 정보가 없습니다. 이전 페이지에서 다시 선택해주세요.");
+            window.location.href = "{{ url_for('complex') }}";
+            throw new Error("Teacher ID missing, redirecting."); 
+        }
+
+        // 타원 가이드 그리기 (기존 로직 유지)
+        function drawEllipse() {
+            guideCtx.clearRect(0, 0, guideCanvas.width, guideCanvas.height);
+            guideCtx.beginPath();
+            guideCtx.ellipse(guideCanvas.width / 2, guideCanvas.height / 2, 80, 100, 0, 0, 2 * Math.PI);
+            guideCtx.strokeStyle = 'rgba(0, 255, 0, 0.4)';
+            guideCtx.lineWidth = 3;
+            guideCtx.stroke();
+        }
+        setInterval(drawEllipse, 100);
+
+        // 라운드 이미지 및 텍스트 업데이트
+        function updateReferenceImage() {
+            referenceImg.src = `/static/images/teachers/${teacher}/${teacher}${currentRound}.png`;
+            roundText.textContent = currentRound;
+        }
+
+        // "사진 제출" 버튼 클릭 이벤트
+        submitBtn.onclick = async () => {
+            // img 태그의 src가 유효한지 확인 (스트림이 잘 오고 있는지)
+            if (!videoFeedElement.src || videoFeedElement.src.startsWith('data:')) { 
+                alert('웹캠 영상이 준비되지 않았습니다. 페이지를 새로고침 해주세요.');
+                return;
+            }
+
+            checkMark.style.display = 'block'; // 체크마크 표시
+            setTimeout(() => {
+                checkMark.style.display = 'none'; // 1초 후 체크마크 숨김
+            }, 1000);
+
+            // --- 웹캠 프레임 캡처 ---
+            // img 태그의 현재 내용을 캔버스에 그리기
+            const img = new Image();
+            // 중요: MediaPipe 스트림은 CORS 문제가 발생할 수 있으므로,
+            // 서버의 video_feed 라우트에서 제공되는 이미지를 가져올 때
+            // crossOrigin 설정을 하거나, 서버에서 적절한 CORS 헤더를 설정해야 할 수 있습니다.
+            // 지금은 Flask 서버에서 같은 도메인이므로 괜찮을 수 있습니다.
+            img.crossOrigin = "Anonymous"; 
+            img.src = videoFeedElement.src + '?t=' + new Date().getTime(); //  캐시 방지를 위해 타임스탬프 추가
+            
+            img.onload = async () => {
+                const captureCanvas = document.createElement('canvas');
+                captureCanvas.width = img.width;
+                captureCanvas.height = img.height;
+                const captureCtx = captureCanvas.getContext('2d');
+
+                // app.py에서 이미 좌우 반전된 프레임을 텍스트와 함께 보내므로, 
+                // HTML의 img 태그에 transform: scaleX(-1)이 적용되어 있다면,
+                // 다시 한 번 반전시켜 정방향으로 캡처해야 합니다.
+                captureCtx.translate(captureCanvas.width, 0);
+                captureCtx.scale(-1, 1);
+                captureCtx.drawImage(img, 0, 0, captureCanvas.width, captureCanvas.height);
+                
+                // 캡처된 이미지를 Blob으로 변환
+                captureCanvas.toBlob(async (blob) => {
+                    if (!blob) {
+                        alert('이미지 캡처에 실패했습니다.');
+                        console.error('Canvas to Blob failed.');
+                        return;
+                    }
+
+                    // --- Firebase에 데이터 전송 ---
+                    const formData = new FormData();
+                    formData.append('photo', blob, `round_${currentRound}_${teacher}.jpg`);
+                    // AU 값은 서버의 generate_frames()에서 계산된 global 변수 (last_calculated_score/au_values)를
+                    // /submit_au_data_with_image 라우트에서 직접 사용하므로, 클라이언트에서 au_value는 보내지 않습니다.
+                    // 서버에서 이미 알고 있는 값이기 때문입니다.
+                    formData.append('teacher_id', teacher); // 선생님 ID
+
+                    try {
+                        const response = await fetch('/submit_au_data_with_image', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        const result = await response.json();
+
+                        if (response.ok) {
+                            console.log('Firebase 저장 성공:', result.message, '사진 URL:', result.photo_url);
+                        } else {
+                            console.error('Firebase 저장 실패:', result.message);
+                            alert(`데이터 저장 실패: ${result.message}`);
+                        }
+                    } catch (error) {
+                        console.error('네트워크 또는 서버 오류:', error);
+                        alert(`데이터 전송 중 오류 발생: ${error.message}`);
+                    }
+
+                    // 다음 라운드 처리 또는 운동 완료
+                    currentRound++;
+                    if (currentRound > TOTAL_ROUNDS) {
+                        submitBtn.textContent = '운동 완료';
+                        submitBtn.style.backgroundColor = '#8e24aa';
+                        submitBtn.style.boxShadow = '0 4px 10px rgba(142, 36, 170, 0.4)';
+                        submitBtn.style.color = 'white';
+                        submitBtn.onclick = () => {
+                            window.location.href = "{{ url_for('feedback') }}";
+                        };
+                    } else {
+                        updateReferenceImage();
+                    }
+
+                }, 'image/jpeg'); // JPEG 형식으로 Blob 생성
+            };
+            img.onerror = () => {
+                alert('웹캠 이미지 로드 오류로 캡처할 수 없습니다. 페이지를 새로고침 해주세요.');
+                console.error("Failed to load image from videoFeedElement.src");
+            };
+        };
+
+        // 초기 로드 시
+        window.addEventListener('DOMContentLoaded', () => {
+            document.body.classList.add('loaded');
+            updateReferenceImage();
+        });
+    </script>
+</body>
+</html>

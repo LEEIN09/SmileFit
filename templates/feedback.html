@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>피드백 | SMILE FIT</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=SUIT:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            margin: 0;
+            font-family: 'SUIT', sans-serif;
+            background-color: white;
+            color: #333;
+            text-align: center;
+        }
+        body.loaded { opacity: 1; }
+        body.fade-out { opacity: 0; }
+        header {
+            font-family: 'Orbitron', sans-serif;
+            background: linear-gradient(90deg, #69b7ff, #a17fff);
+            padding: 30px;
+            font-size: 28px;
+            font-weight: bold;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .home-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 999;
+            padding: 10px 20px;
+            background: #ff4081;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            box-shadow: 0 0 10px #ff4081;
+        }
+        .home-button:hover {
+            background: #e91e63;
+            box-shadow: 0 0 15px #ff4081;
+        }
+        h1 { margin-top: 50px; }
+        .feedback-content {
+            margin-top: 40px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</head>
+<body>
+    <header>SMILE FIT</header>
+    <a href="{{ url_for('index') }}" class="home-button">HOME</a>
+
+    <h1>운동 결과 피드백</h1>
+
+    <div class="feedback-content">
+        <p>여기에 Firebase에 저장된 데이터를 불러와 운동 결과를 시각화하거나 분석하여 보여줄 수 있습니다.</p>
+        <p>예: 각 라운드별 AU 값 그래프, 평균 AU 값, 개선도 등.</p>
+        <p>선생님 ID를 사용하여 특정 선생님과 관련된 데이터를 필터링할 수 있습니다.</p>
+        <div id="resultsDisplay"></div>
+    </div>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            document.body.classList.add('loaded');
+            // 여기에 Firebase에서 데이터를 가져와 피드백을 보여주는 JavaScript 로직을 구현합니다.
+            // 예: Firestore에서 'au_results_by_teacher' 컬렉션 조회
+            // const teacherId = new URLSearchParams(window.location.search).get('teacher');
+            // if (teacherId) {
+            //     // Firebase API를 사용하여 teacherId에 해당하는 데이터 조회
+            //     // db.collection('au_results_by_teacher').where('teacher_id', '==', teacherId).get().then(...)
+            // }
+        });
+    </script>
+</body>
+</html>
