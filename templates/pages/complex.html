@@ -3,153 +3,181 @@
 <head>
   <meta charset="UTF-8">
   <title>선생님 선택 | SMILE FIT</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=SUIT:wght@400;600&display=swap" rel="stylesheet">
   <style>
     body {
-      opacity: 0;
-      transition: opacity 0.4s ease;
       margin: 0;
       padding: 0;
+      height: 100dvh;
       font-family: 'SUIT', sans-serif;
-      text-align: center;
-      background-color: #ffffff;
-      min-height: 100vh;
+      background-color: white;
+      color: #333;
       display: flex;
       flex-direction: column;
-      justify-content: center;
     }
 
-    body.loaded {
-      opacity: 1;
-    }
-
-    body.fade-out {
-      opacity: 0;
-    }
-    .content {
+    header {
+      height: 14vh;
+      background: linear-gradient(90deg, #69b7ff, #a17fff);
+      color: white;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 22px;
+      font-weight: bold;
       display: flex;
-      flex-direction: column;
       justify-content: center;
       align-items: center;
-      min-height: calc(100vh - 80px); /* header 높이 빼기 */
-    }
-    header {
-      font-family: 'Orbitron', sans-serif;
-      background: linear-gradient(90deg, #69b7ff, #a17fff);
-      padding: 30px;
-      font-size: 28px;
-      font-weight: bold;
-      color: white;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
-    .home-button {
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      z-index: 999;
-      padding: 10px 20px;
-      background: #ff4081;
-      color: white;
-      text-decoration: none;
-      border-radius: 8px;
-      font-weight: bold;
-      box-shadow: 0 0 10px #ff4081;
-    }
-
-    .home-button:hover {
-      background: #e91e63;
-      box-shadow: 0 0 15px #ff4081;
-    }
-
-    h1 {
-      font-size: 32px;
-      margin: 30px 0;
+    h2 {
+      height: 8vh;
+      font-size: 18px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .teacher-container {
+      height: 72vh;
       display: flex;
       justify-content: center;
+      align-items: flex-start;
       gap: 30px;
+      padding: 2vh;
       flex-wrap: wrap;
-      padding-bottom: 60px;
+      box-sizing: border-box;
+      margin-bottom: 4vh;
     }
 
     .teacher-card {
-      background: linear-gradient(90deg, #e9f5ff, #ebe4ff);
-      border: 1px solid #ccc;
-      border-radius: 12px;
-      width: 200px;
-      padding: 20px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      width: 22vw;
+      max-width: 220px;
+      height: 58vh;
+      background: linear-gradient(90deg, #d6ebff, #eadcff);
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 3vh 2vw;
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+
+    .teacher-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
     }
 
     .teacher-card img {
       width: 100%;
-      border-radius: 8px;
-      margin-bottom: 10px;
+      border-radius: 12px;
+      object-fit: cover;
     }
 
     .teacher-name {
-      font-size: 20px;
+      font-size: 18px;
       font-weight: bold;
-      margin-bottom: 10px;
+      margin-top: 2vh;
     }
 
     .select-button {
-      padding: 8px 16px;
+      margin-top: 1vh;
+      width: 70%;
+      padding: 8px;
       font-size: 16px;
-      background-color: #007bff;
+      font-weight: bold;
       color: white;
+      background-color: #388e3c;
       border: none;
-      border-radius: 6px;
+      border-radius: 8px;
       cursor: pointer;
-      transition: background-color 0.3s;
+      transition: background-color 0.3s ease;
     }
 
     .select-button:hover {
-      background-color: #0056b3;
+      background-color: #2e7d32;
     }
 
-    @media (max-width: 600px) {
+    .home-button {
+      position: fixed;
+      top: 10px;
+      left: 16px;
+      background: #ff4081;
+      color: white;
+      padding: 4px 8px;
+      font-weight: bold;
+      border-radius: 6px;
+      box-shadow: 0 0 8px #ff4081;
+      z-index: 999;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    @media screen and (min-width: 768px) {
+      header {
+        height: 100px;
+        font-size: 28px;
+      }
+
+      h2 {
+        height: 100px;
+        font-size: 26px;
+      }
+
       .teacher-container {
-        flex-direction: column;
-        align-items: center;
-        gap: 24px;
+        gap: 60px;
+        padding: 0px;
       }
 
       .teacher-card {
-        width: 80%;
+        width: 250px;
+        height: 350px;
+        padding: 24px;
+      }
+
+      .teacher-name {
+        font-size: 22px;
+      }
+
+      .select-button {
+        font-size: 18px;
+        padding: 12px;
+      }
+
+      .home-button {
+        top: 24px;
+        left: 24px;
+        font-size: 20px;
+        padding: 8px 16px;
       }
     }
   </style>
 </head>
 <body>
-
+  <a class="home-button" href="/">홈으로</a>
   <header>SMILE FIT</header>
-
-  <main class="content">
-  <h1>함께 운동할 선생님을 골라주세요</h1>
+  <h2>함께 운동할 선생님을 골라주세요</h2>
 
   <div class="teacher-container">
     <div class="teacher-card">
-      <img src="/static/images/teachers/emma/emma1.png">
+      <img src="/static/images/teachers/emma/emma1.png" alt="Emma">
       <div class="teacher-name">Emma</div>
       <button class="select-button" data-teacher="emma">선택</button>
     </div>
-
     <div class="teacher-card">
-      <img src="/static/images/teachers/olivia/olivia1.png">
+      <img src="/static/images/teachers/olivia/olivia1.png" alt="Olivia">
       <div class="teacher-name">Olivia</div>
       <button class="select-button" data-teacher="olivia">선택</button>
     </div>
-
     <div class="teacher-card">
-      <img src="/static/images/teachers/sophia/sophia1.png">
+      <img src="/static/images/teachers/sophia/sophia1.png" alt="Sophia">
       <div class="teacher-name">Sophia</div>
       <button class="select-button" data-teacher="sophia">선택</button>
     </div>
   </div>
- </main>
 </body>
 </html>
