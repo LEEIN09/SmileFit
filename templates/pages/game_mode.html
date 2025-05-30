@@ -1,64 +1,75 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>게임 모드 선택 | SMILE FIT</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=SUIT:wght@400;600&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=SUIT:wght@400;600&display=swap" rel="stylesheet" />
   <style>
-    /* 💡 페이드인 기본 세팅 */
     body {
-      opacity: 0;
-      transition: opacity 0.8s ease;
       margin: 0;
+      height: 100dvh;
       font-family: 'SUIT', sans-serif;
       background: radial-gradient(ellipse at center, #0f2027, #203a43, #2c5364);
       color: #00ffe1;
+      display: flex;
+      flex-direction: column;
       text-align: center;
-      min-height: 100vh;
+      opacity: 0;
+      transition: opacity 0.8s ease;
     }
 
     body.loaded {
       opacity: 1;
     }
-    
+
     body.fade-out {
       opacity: 0;
     }
 
     header {
-      font-family: 'Orbitron', sans-serif;
+      height: 14vh;
       background: rgba(0, 0, 0, 0.5);
-      padding: 30px;
-      font-size: 28px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 22px;
       font-weight: bold;
       color: #00ffe1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       box-shadow: 0 0 20px #00ffe1;
     }
 
     h2 {
-      color: #00ffe1;
-      font-size: 22px;
-      margin-top: 60px;
-      margin-bottom: 40px;
+      height: 8vh;
+      font-size: 18px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      margin-top: 2vh;
       text-shadow: 0 0 10px #00ffe1;
     }
 
     .mode-container {
+      height: 70vh;
       display: flex;
       justify-content: center;
-      gap: 50px;
+      align-items: flex-start;
+      gap: 6vw;
       flex-wrap: wrap;
-      margin-bottom: 60px;
+      margin-bottom: 2vh;
     }
 
     .mode-box {
-      width: 300px;
-      padding: 30px;
+      width: 35vw;
+      max-width: 280px;
+      padding: 24px;
       background: rgba(0, 0, 0, 0.3);
       border: 2px solid #00ffe1;
       border-radius: 16px;
       box-shadow: 0 0 10px #00ffe1, 0 0 30px #00ffe1 inset;
       transition: all 0.3s ease;
+      margin-top: 2vh;
     }
 
     .mode-box:hover {
@@ -67,7 +78,7 @@
     }
 
     .mode-title {
-      font-size: 20px;
+      font-size: 18px;
       margin-bottom: 12px;
       color: #00ffe1;
       text-shadow: 0 0 10px #00ffe1;
@@ -81,7 +92,7 @@
     }
 
     .mode-btn {
-      padding: 12px 28px;
+      padding: 12px 24px;
       font-size: 16px;
       background: transparent;
       color: #00ffe1;
@@ -98,24 +109,99 @@
       transform: scale(1.05);
     }
 
+    @media screen and (max-width: 600px) {
+      header {
+        font-size: 20px;
+      }
 
-    @media (max-width: 600px) {
+      h2 {
+        font-size: 18px;
+      }
+
       .mode-container {
         flex-direction: column;
-        gap: 30px;
+        gap: 4vh;
       }
 
       .mode-box {
-        width: 80%;
-        margin: auto;
+        width: 80vw;
+        padding: 20px;
       }
-        .mode-btn {
+
+      .mode-btn {
         width: 100%;
         max-width: 240px;
         margin: auto;
       }
     }
 
+    @media screen and (min-width: 768px) {
+      header {
+        height: 100px;
+        font-size: 28px;
+      }
+
+      h2 {
+        height: 80px;
+        font-size: 24px;
+      }
+
+      .mode-container {
+        height: 60vh;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        gap: 6vw;
+        flex-wrap: wrap;
+        margin-top: 40px;
+      }
+
+      .mode-box {
+        width: 35vw;           
+        max-width: 350px;
+        height: 300px;        
+        padding: 24px;
+        background: rgba(0, 0, 0, 0.3);
+        border: 2px solid #00ffe1;
+        border-radius: 16px;
+        box-shadow: 0 0 10px #00ffe1, 0 0 30px #00ffe1 inset;
+        transition: all 0.3s ease;
+        margin-top: 2vh;
+        padding:20px;
+      }
+
+     .mode-title {
+        font-size: 22px;
+        margin-bottom: 12px;
+        margin-top: 12px;
+        color: #00ffe1;
+        text-shadow: 0 0 10px #00ffe1;
+      }
+
+      .mode-desc {
+        font-size: 18px;
+        color: #ffffff;
+        margin-bottom: 20px;
+        text-shadow: 0 0 5px #00ffe1;
+      }
+
+      .home-button {
+        position: fixed;
+        top: 24px;
+        left: 24px;
+        background: #ff4081;
+        color: white;
+        padding: 8px 16px;
+        font-weight: bold;
+        border-radius: 6px;
+        box-shadow: 0 0 8px #ff4081;
+        z-index: 999;
+        text-decoration: none;
+        font-size: 20px;
+      }
+  }
+
+    
   </style>
 </head>
 <body>
@@ -125,16 +211,14 @@
   <div class="mode-container">
     <div class="mode-box">
       <div class="mode-title">표정 따라하기 모드</div>
-      <div class="mode-desc">기준 이미지를 보고 똑같이 따라하며 점수를 받아요.</div>
+      <div class="mode-desc">기준 이미지를 보고 똑같이<br>따라하며 점수를 받아요.</div>
       <button class="mode-btn" onclick="loadPage('game_follow')">시작하기</button>
     </div>
     <div class="mode-box">
       <div class="mode-title">감정 표현하기 모드</div>
-      <div class="mode-desc">감정 키워드에 맞게 표정을 지어보고 평가받아요.</div>
+      <div class="mode-desc">감정 키워드에 맞게 표정을<br>지어보고 평가받아요.</div>
       <button class="mode-btn" onclick="loadPage('game_emotion')">시작하기</button>
     </div>
   </div>
-  
-
 </body>
 </html>

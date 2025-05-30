@@ -1,19 +1,31 @@
 
-// ✅ game_follow.js (모듈 방식)
-// Mediapipe는 이미 index.html에 <script src="..."></script> 방식으로 넣어두었다고 가정
+let camera;
 
 export function init() {
   console.log("✅ game_follow.js 실행됨");
 
-  // DOM 요소(imageA/imageB 등)가 준비되었는지 주기적으로 확인
   const interval = setInterval(() => {
     const imgA = document.getElementById("imageA");
     const imgB = document.getElementById("imageB");
-    if (imgA && imgB) {
+    const video = document.querySelector(".input_video");
+    const canvas = document.querySelector(".output_canvas");
+    const ctx = canvas.getContext("2d");
+
+    if (imgA && imgB && video && canvas && ctx) {
       clearInterval(interval);
       drawGuideEllipse();
       updateUI();
-      
+
+      // ✅ 캠 재시작
+      camera = new Camera(video, {
+        onFrame: async () => {
+          await faceMesh.send({ image: video });
+        },
+        width: 300,
+        height: 225,
+      });
+      camera.start();
+      console.log("📷 캠 시작됨");
     }
   }, 100);
 }
@@ -54,13 +66,6 @@ faceMesh.onResults(results => {
     latestLandmarks = structuredClone(results.multiFaceLandmarks[0]);
   }
 });
-
-const camera = new Camera(video, {
-  onFrame: async () => await faceMesh.send({ image: video }),
-  width: 300,
-  height: 225
-});
-camera.start();
 
 function drawGuideEllipse() {
   const canvas = document.getElementById("guideCanvas");
@@ -230,6 +235,7 @@ function updateUI() {
 export function cleanup() {
   if (camera && typeof camera.stop === 'function') {
     camera.stop();
+    camera = null;
     console.log("📷 game_follow 카메라 종료됨");
   }
 }

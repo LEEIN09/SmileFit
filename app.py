@@ -2,11 +2,15 @@ from flask import Flask, send_from_directory, request, jsonify, render_template
 from flask_mail import Mail, Message
 import base64
 
-app = Flask(__name__, static_url_path='/models', static_folder='static')
+app = Flask(__name__)
 
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/models/<path:filename>')
+def serve_models(filename):
+    return send_from_directory('static/models', filename)
 
 @app.route('/pages/<path:filename>')
 def load_page(filename):
