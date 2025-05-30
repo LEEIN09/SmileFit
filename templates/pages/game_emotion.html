@@ -117,17 +117,39 @@
       text-shadow: 0 0 5px #00ffe1;
     }
 
-  @media screen and (min-width: 1024px), (hover: hover) and (pointer: fine) {
-    .container {
-      flex-direction: column;
-      gap: 20px;
-    }
+  .home-button {
+    position: fixed;
+    top: 10px;
+    left: 16px;
+    background: #ff4081;
+    color: white;
+    padding: 4px 8px;
+    font-weight: bold;
+    border-radius: 6px;
+    box-shadow: 0 0 8px #ff4081;
+    z-index: 999;
+    text-decoration: none;
+    font-size: 14px;
   }
+
+  @media screen and (min-width: 1024px), (hover: hover) and (pointer: fine) {
+      .container {
+        display: flex;
+        height: auto;
+        gap: 50px;        
+    }
+
+      img, video, canvas {
+        height: 40vh;
+        width: auto;
+      }  
+
     #score, #totalScore {
       font-size: 18px;
-      margin-top: 20px;
+      margin-top: 40px;
       text-shadow: 0 0 5px #00ffe1;
     }
+
     .score-row {
       display: flex;
       justify-content: center; /* 가운데 정렬 */
@@ -136,6 +158,21 @@
       font-size: 18px;
     }
 
+      .home-button {
+        position: fixed;
+        top: 24px;
+        left: 24px;
+        background: #ff4081;
+        color: white;
+        padding: 8px 16px;
+        font-weight: bold;
+        border-radius: 6px;
+        box-shadow: 0 0 8px #ff4081;
+        z-index: 999;
+        text-decoration: none;
+        font-size: 20px;
+      }
+    }
 </style>
 
   <div class="title-row">

@@ -125,6 +125,21 @@
       text-shadow: 0 0 5px #00ffe1;
     }
 
+  .home-button {
+    position: fixed;
+    top: 10px;
+    left: 16px;
+    background: #ff4081;
+    color: white;
+    padding: 4px 8px;
+    font-weight: bold;
+    border-radius: 6px;
+    box-shadow: 0 0 8px #ff4081;
+    z-index: 999;
+    text-decoration: none;
+    font-size: 14px;
+  }
+
   @media screen and (min-width: 1024px), (hover: hover) and (pointer: fine) {
       .container {
         display: flex;
@@ -134,9 +149,9 @@
       }
 
       img, video, canvas {
-        width: 80vw;
-        height: auto;
-      }
+        height: 40vh;
+        width: auto;
+      }  
 
       button {
         width: 80vw;
@@ -164,6 +179,21 @@
         font-family: 'Orbitron', sans-serif;
         text-shadow: 0 0 10px #00ffe1;
         margin: 0;
+      }
+
+      .home-button {
+        position: fixed;
+        top: 24px;
+        left: 24px;
+        background: #ff4081;
+        color: white;
+        padding: 8px 16px;
+        font-weight: bold;
+        border-radius: 6px;
+        box-shadow: 0 0 8px #ff4081;
+        z-index: 999;
+        text-decoration: none;
+        font-size: 20px;
       }
 
     }
