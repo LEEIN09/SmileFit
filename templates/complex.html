@@ -72,6 +72,12 @@
       width: 200px;
       padding: 20px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      transition: transform 0.3s, box-shadow 0.3s; /* 호버 효과 추가 */
+    }
+
+    .teacher-card:hover {
+      transform: translateY(-5px); /* 살짝 위로 뜨는 효과 */
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15); /* 그림자 강화 */
     }
 
     .teacher-card img {
@@ -84,6 +90,7 @@
       font-size: 20px;
       font-weight: bold;
       margin-bottom: 10px;
+      color: #333; /* 텍스트 색상 명확화 */
     }
 
     .select-button {
@@ -95,10 +102,12 @@
       border-radius: 6px;
       cursor: pointer;
       transition: background-color 0.3s;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* 버튼 그림자 추가 */
     }
 
     .select-button:hover {
       background-color: #0056b3;
+      transform: translateY(-2px); /* 버튼 클릭감 효과 */
     }
   </style>
 </head>
@@ -110,25 +119,25 @@
 
   <div class="teacher-container">
     <div class="teacher-card">
-      <img src="/static/images/teachers/emma/emma1.png">
+      <img src="/static/images/teachers/emma/emma1.png" alt="Emma 선생님">
       <div class="teacher-name">Emma</div>
-      <button class="select-button" onclick="delayedNav('{{ url_for('complex_fit') }}?teacher=emma')">선택</button>
+      <button class="select-button" onclick="delayedNav('{{ url_for('complex_fit', teacher='emma') }}')">선택</button>
     </div>
 
     <div class="teacher-card">
-      <img src="/static/images/teachers/olivia/olivia1.png">
+      <img src="/static/images/teachers/olivia/olivia1.png" alt="Olivia 선생님">
       <div class="teacher-name">Olivia</div>
-      <button class="select-button" onclick="delayedNav('{{ url_for('complex_fit') }}?teacher=olivia')">선택</button>
+      <button class="select-button" onclick="delayedNav('{{ url_for('complex_fit', teacher='olivia') }}')">선택</button>
     </div>
 
     <div class="teacher-card">
-      <img src="/static/images/teachers/sophia/sophia1.png">
+      <img src="/static/images/teachers/sophia/sophia1.png" alt="Sophia 선생님">
       <div class="teacher-name">Sophia</div>
-      <button class="select-button" onclick="delayedNav('{{ url_for('complex_fit') }}?teacher=sophia')">선택</button>
+      <button class="select-button" onclick="delayedNav('{{ url_for('complex_fit', teacher='sophia') }}')">선택</button>
     </div>
   </div>
 
-  <a href="{{ url_for('index') }}" class="home-button" onclick="delayedNav('{{ url_for('index') }}'); return false;">HOME</a>
+    <a href="{{ url_for('index') }}" class="home-button" onclick="delayedNav('{{ url_for('index') }}'); return false;">HOME</a>
 
   <script>
     // 페이드인 적용
