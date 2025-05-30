@@ -249,7 +249,7 @@
           document.getElementById('app').innerHTML = temp.innerHTML;
 
           try {
-            const module = await import(`/scripts/${route}.js`);
+            const module = await import(`/scripts/${route}.js?v=${Date.now()}`);
             currentModule = module;
             if (module?.init) module.init();
           } catch (e) {

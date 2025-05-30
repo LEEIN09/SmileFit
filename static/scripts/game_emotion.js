@@ -92,11 +92,12 @@ export function init() {
 
     const refResult = await tryRecognizeReferenceEmotion();
     if (!refResult) {
-      alert("❌ 기준 이미지 인식 실패 - 라운드 건너뜀");
-      currentRound++;
+      alert("❌ 기준 이미지 인식 실패 - 새로운 이미지로 다시 시도합니다");
+      selectedIndices[currentRound] = allIndices.find(i => !selectedIndices.includes(i));
       updateUI();
       return;
     }
+
 
     const refVec = Object.values(refResult.expressions);
     const userVec = Object.values(userResult.expressions);
