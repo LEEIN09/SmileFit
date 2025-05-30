@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>피드백 | SMILE FIT</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=SUIT:wght@400;600&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=SUIT:wght@400;600&display=swap" rel="stylesheet" />
   <style>
     body {
       margin: 0;
@@ -13,10 +14,6 @@
       opacity: 0;
       transition: opacity 0.4s ease;
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: stretch;
     }
 
     body.loaded {
@@ -24,33 +21,31 @@
     }
 
     header {
-      font-family: 'Orbitron', sans-serif;
+      height: 14vh;
       background: linear-gradient(90deg, #69b7ff, #a17fff);
-      padding: 30px;
-      font-size: 28px;
-      font-weight: bold;
       color: white;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-      text-align: center;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 22px;
+      font-weight: bold;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
     .home-button {
       position: fixed;
-      top: 20px;
-      left: 20px;
-      z-index: 999;
-      padding: 10px 20px;
+      top: 10px;
+      left: 16px;
       background: #ff4081;
       color: white;
-      text-decoration: none;
-      border-radius: 8px;
+      padding: 4px 8px;
       font-weight: bold;
-      box-shadow: 0 0 10px #ff4081;
-    }
-
-    .home-button:hover {
-      background: #e91e63;
-      box-shadow: 0 0 15px #ff4081;
+      border-radius: 6px;
+      box-shadow: 0 0 8px #ff4081;
+      z-index: 999;
+      text-decoration: none;
+      font-size: 14px;
     }
 
     .content-wrapper {
@@ -83,6 +78,11 @@
       width: 300px;
     }
 
+    .email-box h3 {
+      margin: 0;
+      font-size: 18px;
+    }
+
     .email-box input,
     .email-box button {
       padding: 12px;
@@ -98,6 +98,18 @@
     }
 
     @media (max-width: 600px) {
+      header {
+        height: 14vh;
+        font-size: 20px;
+      }
+
+      .home-button {
+        top: 10px;
+        left: 16px;
+        font-size: 14px;
+        padding: 6px 12px;
+      }
+
       .content-wrapper {
         flex-direction: column;
         align-items: center;
@@ -121,10 +133,31 @@
       }
     }
 
+    @media screen and (min-width: 768px) {
+      header {
+        height: 100px;
+        font-size: 28px;
+      }
+
+    .home-button {
+      position: fixed;
+      top: 24px;
+      left: 24px;
+      background: #ff4081;
+      color: white;
+      padding: 8px 16px;
+      font-weight: bold;
+      border-radius: 6px;
+      box-shadow: 0 0 8px #ff4081;
+      z-index: 999;
+      text-decoration: none;
+      font-size: 20px;
+    }
+    }
   </style>
 </head>
 <body>
-
+  <a class="home-button" href="/">홈으로</a>
   <header>SMILE FIT</header>
 
   <div class="content-wrapper">
@@ -132,11 +165,10 @@
 
     <div class="email-box">
       <h3>결과 이메일로 받기</h3>
-      <input type="email" id="emailInput" placeholder="이메일 주소 입력">
+      <input type="email" id="emailInput" placeholder="이메일 주소 입력" />
       <button onclick="sendEmail()">이메일 전송</button>
       <div id="status"></div>
     </div>
   </div>
-
 </body>
 </html>
