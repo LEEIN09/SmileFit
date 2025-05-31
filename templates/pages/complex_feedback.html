@@ -78,11 +78,45 @@
 
   <div id="result-container" style="padding: 20px;">
     <h2 style="text-align:center;">운동을 완료하였습니다!</h2>
-    <canvas id="chart" style="width: 100px; height: 60px; margin: 0 auto;"></canvas>
+    
     <div style="text-align:center; margin-top: 20px;">
-      <button id="analyze-btn">분석하기</button>
-      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      <button id="analyze-btn">분석하기</button>      
+      <!-- 복합운동 결과지 시작 -->
+      <hr style="margin: 40px 0;" />
+      <h2 style="text-align:center;">SMILE FIT 복합운동 결과지</h2>
+
+      <!-- 2행: 기준 이미지 -->
+      <div id="reference-images" style="display: flex; justify-content: center; flex-wrap: wrap; gap: 6px; margin: 20px 0;"></div>
+
+      <!-- 3행: 사용자 이미지 -->
+      <div id="user-images" style="display: flex; justify-content: center; flex-wrap: wrap; gap: 6px; margin: 20px 0;"></div>
+
+      <!-- 4행: 근육 top10 + 기존 유사도 그래프 -->
+      <div style="display: flex; justify-content: center; gap: 100px; flex-wrap: wrap; margin: 40px 0;">
+        <div>
+          <h4 style="text-align: center;">가장 많이 사용된 근육 TOP 10</h4>
+          <ul id="top-muscle-list" style="list-style: none; padding: 0; margin: 0;"></ul>
+        </div>
+        <div>
+          <h4 style="text-align: center;">라운드별 유사도</h4>          
+          <canvas id="chart" style="width: 40vw; max-width: 500px; aspect-ratio: 1 / 1; display: block; margin: 0 auto;"></canvas>
+        </div>
+      </div>
+
+      <!-- 5행: 동작 top10 + 종합 요약 -->
+      <div style="display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; margin-bottom: 60px;">
+        <div>
+          <h4 style="text-align: center;">가장 많이 사용된 동작 TOP 10</h4>
+          <ul id="top-action-list" style="list-style: none; padding: 0; margin: 0;"></ul>
+        </div>
+        <div style="max-width: 280px; text-align: center;">
+          <h4>종합 점수 및 피드백</h4>
+          <p id="final-score" style="font-weight: bold; font-size: 20px;"></p>
+          <p id="summary-comment" style="margin-top: 10px;"></p>
+        </div>
+      </div>
     </div>
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </body>
 </html>
