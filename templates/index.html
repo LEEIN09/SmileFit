@@ -176,6 +176,7 @@
     }
   }
 </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
   <audio id="metal_click" src="/static/sounds/metal_click.mp3"></audio>
@@ -226,7 +227,7 @@
       'complex_fit': '/pages/complex_fit.html',
       'focus': '/pages/focus.html',
       'focus_fit': '/pages/focus_fit.html',
-      'feedback': '/pages/feedback.html'
+      'complex_feedback': '/pages/complex_feedback.html'
     };
 
     let currentModule = null;
@@ -251,7 +252,13 @@
           try {
             const module = await import(`/scripts/${route}.js?v=${Date.now()}`);
             currentModule = module;
-            if (module?.init) module.init();
+            console.log("📦 모듈 import 성공:", route);
+            if (module?.init){
+              console.log("🚀 init() 호출됨:", route);
+             module.init();
+             } else {
+              console.warn("❗ init() 함수 없음:", route);
+             }
           } catch (e) {
             console.warn(`⚠️ ${route}.js 없음 또는 import 실패`, e);
           }

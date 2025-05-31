@@ -1,8 +1,28 @@
 from flask import Flask, send_from_directory, request, jsonify, render_template
 from flask_mail import Mail, Message
 import base64
+import numpy as np
+import tensorflow as tf
+from tensorflow.keras.models import load_model
 
 app = Flask(__name__)
+
+model = load_model("au_regression_model.h5", compile=False)
+
+@app.route('/predict_aus', methods=['POST'])
+def predict_aus():
+    data = request.get_json()
+
+    # 입력 데이터: vectors는 (10, 136) 형태의 리스트
+    vectors = np.array(data.get("vectors", []))
+
+    if vectors.ndim != 2 or vectors.shape[1] != 136:
+        return jsonify({"error": "Invalid input shape"}), 400
+
+    # 예측
+    predictions = model.predict(vectors)
+
+    return jsonify({"aus": predictions.tolist()})
 
 @app.route('/')
 def index():

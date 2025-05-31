@@ -75,18 +75,25 @@ export function init() {
     return null;
   }
 
+  async function tryRecognizeUserEmotion(canvas, maxAttempts = 3) {
+    for (let i = 0; i < maxAttempts; i++) {
+      const result = await faceapi
+        .detectSingleFace(canvas, new faceapi.TinyFaceDetectorOptions())
+        .withFaceExpressions();
+      if (result) return result;
+    }
+    return null;
+  }
+
   document.getElementById("captureBtn").onclick = async () => {
     const canvas = document.createElement("canvas");
     canvas.width = 300;
     canvas.height = 225;
     canvas.getContext("2d").drawImage(video, 0, 0, 300, 225);
 
-    const userResult = await faceapi
-      .detectSingleFace(canvas, new faceapi.TinyFaceDetectorOptions())
-      .withFaceExpressions();
-
+    const userResult = await tryRecognizeUserEmotion(canvas);
     if (!userResult) {
-      alert("❌ 사용자 얼굴 인식 실패");
+      alert("❌ 사용자 얼굴 인식 실패 - 다시 시도해주세요");
       return;
     }
 

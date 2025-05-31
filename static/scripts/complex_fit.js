@@ -68,10 +68,11 @@ export function init() {
       submitBtn.style.boxShadow = '0 4px 10px rgba(142, 36, 170, 0.4)';
       submitBtn.style.color = 'white';
       submitBtn.onclick = () => {
+        console.log("📤 complex_feedback 페이지로 이동 시도 중");
         sessionStorage.setItem('capturedImages', JSON.stringify(capturedImages));
         sessionStorage.setItem('selectedTeacher', teacher);
         sessionStorage.setItem('mode', 'complex');
-        loadPage('feedback');
+        loadPage('complex_feedback');
       };
     } else {
       updateReferenceImage();
