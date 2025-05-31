@@ -197,12 +197,12 @@
     </div>
   </div>
 
-<a href="/" class="home-button" onclick="window.location.href = '/'; return false;">HOME</a>
+<a href="#" class="home-button" onclick="loadPage('index'); return false;">HOME</a>
 
   <script>
     window.addEventListener('DOMContentLoaded', () => {
       document.body.classList.add('loaded');
-      loadPage('index');
+    
     });
 
     function metalClickSound() {
