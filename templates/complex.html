@@ -1,159 +1,231 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <title>선생님 선택 | SMILE FIT</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=SUIT:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    body {
-      opacity: 0;
-      transition: opacity 0.4s ease;
-      margin: 0;
-      padding: 0;
-      font-family: 'SUIT', sans-serif;
-      text-align: center;
-      background-color: #ffffff;
-    }
+    <meta charset="UTF-8">
+    <title>선생님 선택 | SMILE FIT</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=SUIT:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            margin: 0;
+            padding: 0;
+            font-family: 'SUIT', sans-serif;
+            text-align: center; /* 전체 텍스트 중앙 정렬 */
+            background-color: #ffffff;
+            display: flex; /* flexbox를 사용하여 전체 body 내용 중앙 정렬 */
+            flex-direction: column; /* 세로 방향으로 정렬 */
+            min-height: 100vh; /* 최소 뷰포트 높이 */
+        }
 
-    body.loaded {
-      opacity: 1;
-    }
+        body.loaded {
+            opacity: 1;
+        }
 
-    body.fade-out {
-      opacity: 0;
-    }
+        body.fade-out {
+            opacity: 0;
+        }
 
-    header {
-      font-family: 'Orbitron', sans-serif;
-      background: linear-gradient(90deg, #69b7ff, #a17fff);
-      padding: 30px;
-      font-size: 28px;
-      font-weight: bold;
-      color: white;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    }
+        header {
+            font-family: 'Orbitron', sans-serif;
+            background: linear-gradient(90deg, #69b7ff, #a17fff);
+            padding: 30px;
+            font-size: 28px;
+            font-weight: bold;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            width: 100%; /* 너비 100%로 설정 */
+            box-sizing: border-box; /* 패딩이 너비에 포함되도록 */
+            text-align: center; /* 헤더 텍스트 중앙 정렬 */
+        }
 
-    .home-button {
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      z-index: 999;
-      padding: 10px 20px;
-      background: #ff4081;
-      color: white;
-      text-decoration: none;
-      border-radius: 8px;
-      font-weight: bold;
-      box-shadow: 0 0 10px #ff4081;
-    }
+        .main-content-wrapper { /* body 내부 콘텐츠를 감싸는 새로운 div 추가 */
+            flex-grow: 1; /* 남은 공간을 차지하여 중앙 정렬 */
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* 세로 중앙 정렬 */
+            align-items: center; /* 가로 중앙 정렬 */
+            padding: 20px; /* 전체 콘텐츠 주변에 여백 추가 */
+            box-sizing: border-box;
+            width: 100%;
+        }
 
-    .home-button:hover {
-      background: #e91e63;
-      box-shadow: 0 0 15px #ff4081;
-    }
+        h1 {
+            font-size: 32px;
+            margin: 30px 0 50px; /* 제목 상하 여백 조정 */
+            color: #222;
+        }
 
-    h1 {
-      font-size: 32px;
-      margin: 30px 0;
-    }
+        .teacher-container {
+            display: flex;
+            justify-content: center; /* 카드들을 중앙으로 정렬 */
+            align-items: flex-start; /* 카드들의 상단 정렬 (키가 다를 때) */
+            gap: 30px; /* 카드 사이 간격 */
+            flex-wrap: wrap; /* 화면이 좁아지면 줄 바꿈 */
+            padding-bottom: 60px; /* 하단 여백 */
+            max-width: 960px; /* 최대 너비 설정으로 너무 넓게 퍼지는 것 방지 */
+            width: 100%; /* 부모에 맞춰 너비 설정 */
+        }
 
-    .teacher-container {
-      display: flex;
-      justify-content: center;
-      gap: 30px;
-      flex-wrap: wrap;
-      padding-bottom: 60px;
-    }
+        .teacher-card {
+            background: linear-gradient(90deg, #e9f5ff, #ebe4ff);
+            border: 1px solid #ccc;
+            border-radius: 12px;
+            width: 200px; /* 고정 너비 */
+            padding: 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex; /* 카드 내부 요소들을 flexbox로 정렬 */
+            flex-direction: column;
+            align-items: center; /* 카드 내부 텍스트와 이미지 중앙 정렬 */
+        }
 
-    .teacher-card {
-      background: linear-gradient(90deg, #e9f5ff, #ebe4ff);
-      border: 1px solid #ccc;
-      border-radius: 12px;
-      width: 200px;
-      padding: 20px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      transition: transform 0.3s, box-shadow 0.3s; /* 호버 효과 추가 */
-    }
+        .teacher-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
 
-    .teacher-card:hover {
-      transform: translateY(-5px); /* 살짝 위로 뜨는 효과 */
-      box-shadow: 0 8px 20px rgba(0,0,0,0.15); /* 그림자 강화 */
-    }
+        .teacher-card img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 15px; /* 이미지 하단 여백 조정 */
+            object-fit: cover; /* 이미지 비율 유지하며 채우기 */
+        }
 
-    .teacher-card img {
-      width: 100%;
-      border-radius: 8px;
-      margin-bottom: 10px;
-    }
+        .teacher-name {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 15px; /* 이름 하단 여백 조정 */
+            color: #333;
+        }
 
-    .teacher-name {
-      font-size: 20px;
-      font-weight: bold;
-      margin-bottom: 10px;
-      color: #333; /* 텍스트 색상 명확화 */
-    }
+        .select-button {
+            padding: 10px 20px; /* 버튼 패딩 조정 */
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            width: calc(100% - 20px); /* 패딩 고려한 너비 */
+            max-width: 160px; /* 버튼 최대 너비 */
+        }
 
-    .select-button {
-      padding: 8px 16px;
-      font-size: 16px;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background-color 0.3s;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* 버튼 그림자 추가 */
-    }
+        .select-button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
 
-    .select-button:hover {
-      background-color: #0056b3;
-      transform: translateY(-2px); /* 버튼 클릭감 효과 */
-    }
-  </style>
+        .home-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 999;
+            padding: 10px 20px;
+            background: #ff4081;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            box-shadow: 0 0 10px #ff4081;
+            transition: background 0.3s, box-shadow 0.3s; /* 트랜지션 추가 */
+        }
+
+        .home-button:hover {
+            background: #e91e63;
+            box-shadow: 0 0 15px #ff4081;
+        }
+
+        @media (max-width: 768px) { /* 태블릿 및 모바일 */
+            h1 {
+                font-size: 28px;
+                margin: 20px 0 40px;
+            }
+            .teacher-container {
+                gap: 20px; /* 간격 줄이기 */
+                padding-bottom: 40px;
+            }
+            .teacher-card {
+                width: 160px; /* 카드 너비 줄이기 */
+                padding: 15px;
+            }
+            .teacher-name {
+                font-size: 18px;
+            }
+            .select-button {
+                font-size: 14px;
+                padding: 8px 15px;
+            }
+            .home-button {
+                padding: 8px 15px;
+                font-size: 14px;
+                top: 15px;
+                left: 15px;
+            }
+        }
+
+        @media (max-width: 480px) { /* 작은 모바일 */
+            h1 {
+                font-size: 24px;
+                margin: 15px 0 30px;
+            }
+            .teacher-card {
+                width: 85%; /* 카드 너비 더 넓게 (세로 정렬 시) */
+                max-width: 250px; /* 최대 너비 제한 */
+            }
+            .teacher-container {
+                flex-direction: column; /* 세로로 쌓기 */
+                align-items: center; /* 세로 중앙 정렬 */
+                gap: 25px; /* 세로 간격 */
+            }
+        }
+    </style>
 </head>
 <body>
 
-  <header>SMILE FIT</header>
+    <header>SMILE FIT</header>
 
-  <h1>함께 운동할 선생님을 골라주세요</h1>
+    <div class="main-content-wrapper"> <h1>함께 운동할 선생님을 골라주세요</h1>
 
-  <div class="teacher-container">
-    <div class="teacher-card">
-      <img src="/static/images/teachers/emma/emma1.png" alt="Emma 선생님">
-      <div class="teacher-name">Emma</div>
-      <button class="select-button" onclick="delayedNav('{{ url_for('complex_fit', teacher='emma') }}')">선택</button>
-    </div>
+        <div class="teacher-container">
+            <div class="teacher-card">
+                <img src="/static/images/teachers/emma/emma1.png" alt="Emma 선생님">
+                <div class="teacher-name">Emma</div>
+                <button class="select-button" onclick="delayedNav('{{ url_for('complex_fit', teacher='emma') }}')">선택</button>
+            </div>
 
-    <div class="teacher-card">
-      <img src="/static/images/teachers/olivia/olivia1.png" alt="Olivia 선생님">
-      <div class="teacher-name">Olivia</div>
-      <button class="select-button" onclick="delayedNav('{{ url_for('complex_fit', teacher='olivia') }}')">선택</button>
-    </div>
+            <div class="teacher-card">
+                <img src="/static/images/teachers/olivia/olivia1.png" alt="Olivia 선생님">
+                <div class="teacher-name">Olivia</div>
+                <button class="select-button" onclick="delayedNav('{{ url_for('complex_fit', teacher='olivia') }}')">선택</button>
+            </div>
 
-    <div class="teacher-card">
-      <img src="/static/images/teachers/sophia/sophia1.png" alt="Sophia 선생님">
-      <div class="teacher-name">Sophia</div>
-      <button class="select-button" onclick="delayedNav('{{ url_for('complex_fit', teacher='sophia') }}')">선택</button>
-    </div>
-  </div>
+            <div class="teacher-card">
+                <img src="/static/images/teachers/sophia/sophia1.png" alt="Sophia 선생님">
+                <div class="teacher-name">Sophia</div>
+                <button class="select-button" onclick="delayedNav('{{ url_for('complex_fit', teacher='sophia') }}')">선택</button>
+            </div>
+        </div>
+    </div> <a href="{{ url_for('index') }}" class="home-button" onclick="delayedNav('{{ url_for('index') }}'); return false;">HOME</a>
 
-    <a href="{{ url_for('index') }}" class="home-button" onclick="delayedNav('{{ url_for('index') }}'); return false;">HOME</a>
+    <script>
+        // 페이드인 적용
+        window.addEventListener('DOMContentLoaded', () => {
+            document.body.classList.add('loaded');
+        });
 
-  <script>
-    // 페이드인 적용
-    window.addEventListener('DOMContentLoaded', () => {
-      document.body.classList.add('loaded');
-    });
-
-    // 페이드아웃 후 페이지 이동
-    function delayedNav(url) {
-      document.body.classList.remove('loaded');
-      document.body.classList.add('fade-out');
-      setTimeout(() => {
-        window.location.href = url;
-      }, 400);
-    }
-  </script>
+        // 페이드아웃 후 페이지 이동
+        function delayedNav(url) {
+            document.body.classList.remove('loaded');
+            document.body.classList.add('fade-out');
+            setTimeout(() => {
+                window.location.href = url;
+            }, 400);
+        }
+    </script>
 
 </body>
 </html>
