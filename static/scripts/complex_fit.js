@@ -44,16 +44,21 @@ export function init() {
   setInterval(drawEllipse, 100);
 
   // 기준 이미지 업데이트
-  function updateReferenceImage() {
-    if (currentRound === 0) {
-      referenceImg.src = "";
-      referenceImg.alt = "무표정 사진을 찍어주세요";
-      roundText.textContent = "무표정";
-    } else {
-      referenceImg.src = `/static/images/teachers/${teacher}/${teacher}${currentRound}.png`;
-      roundText.textContent = currentRound;
-    }
+function updateReferenceImage() {
+  const referenceImg = document.getElementById("reference-img");
+  const refMessage = document.getElementById("ref-message");
+
+  if (currentRound === 0) {
+    referenceImg.style.display = "none";
+    refMessage.style.display = "block";
+    roundText.textContent = "무표정";
+  } else {
+    referenceImg.src = `/static/images/teachers/${teacher}/${teacher}${currentRound}.png`;
+    referenceImg.style.display = "block";
+    refMessage.style.display = "none";
+    roundText.textContent = currentRound;
   }
+}
 
   // 사진 캡처
   function captureCurrentFrame() {

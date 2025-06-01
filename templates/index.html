@@ -202,7 +202,7 @@
   <script>
     window.addEventListener('DOMContentLoaded', () => {
       document.body.classList.add('loaded');
-    
+      loadPage('index');
     });
 
     function metalClickSound() {
@@ -231,9 +231,10 @@
     };
 
     let currentModule = null;
+    const pageCache = new Map();
 
     async function loadPage(route) {
-      const path = routes[route];
+      const path = routes[route]; // 이 줄은 기존 코드에서 유지
       if (!path) return;
 
       if (currentModule?.cleanup) currentModule.cleanup();
@@ -243,22 +244,30 @@
 
       setTimeout(async () => {
         try {
-          const res = await fetch(path);
-          const html = await res.text();
+          let html;
+          if (pageCache.has(route)) {
+            html = pageCache.get(route);
+          } else {
+            const res = await fetch(path);
+            html = await res.text();
+            pageCache.set(route, html);
+          }
+
           const temp = document.createElement('div');
           temp.innerHTML = html;
           document.getElementById('app').innerHTML = temp.innerHTML;
 
           try {
-            const module = await import(`/scripts/${route}.js?v=${Date.now()}`);
+            const version = "1.0.3";
+            const module = await import(`/scripts/${route}.js?v=${version}`);
             currentModule = module;
             console.log("📦 모듈 import 성공:", route);
-            if (module?.init){
+            if (module?.init) {
               console.log("🚀 init() 호출됨:", route);
-             module.init();
-             } else {
+              module.init();
+            } else {
               console.warn("❗ init() 함수 없음:", route);
-             }
+            }
           } catch (e) {
             console.warn(`⚠️ ${route}.js 없음 또는 import 실패`, e);
           }
@@ -270,6 +279,7 @@
         }
       }, 400);
     }
+
 
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {

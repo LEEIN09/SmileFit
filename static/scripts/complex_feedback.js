@@ -142,11 +142,25 @@ function getFeedback(avgScore) {
 
 export async function init() {
   document.body.classList.add("loaded");
-  const dateSpan = document.getElementById("report-date");
-  const today = new Date().toLocaleDateString("ko-KR");
-  dateSpan.textContent = today;
+  // const dateSpan = document.getElementById("report-date");
+  // const nameInput = document.getElementById("user-name");
+
+  // const today = new Date().toLocaleDateString("ko-KR");
+  // const name = nameInput?.value.trim() || "";
+  
+  // dateSpan.textContent = name ? `${today} - ${name}` : today;
+
 
   document.getElementById("analyze-btn").addEventListener("click", async () => {
+
+  const dateSpan = document.getElementById("report-date");
+  const nameInput = document.getElementById("user-name");
+
+  const today = new Date().toLocaleDateString("ko-KR");
+  const name = nameInput?.value.trim() || "";
+  
+  dateSpan.textContent = name ? `${today} - ${name}` : today;
+
     const teacher = sessionStorage.getItem("selectedTeacher");
     const refImages = [`/static/images/teachers/${teacher}/neutral.png`];
     for (let i = 1; i <= 10; i++) refImages.push(`/static/images/teachers/${teacher}/${teacher}${i}.png`);
@@ -162,7 +176,7 @@ export async function init() {
     const avgScore = similarityScores.reduce((a, b) => a + b, 0) / similarityScores.length;
 
     renderChart(similarityScores);
-    document.getElementById("feedback-comment").textContent = getFeedback(avgScore);
+    document.getElementById("summary-text").textContent = getFeedback(avgScore);
 
     const refContainer = document.getElementById("reference-images");
     refImages.slice(1).forEach(src => {

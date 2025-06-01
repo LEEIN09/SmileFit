@@ -155,6 +155,14 @@
       font-size: 14px;
     }
 
+    .ref-message {
+      font-size: 20px;
+      font-weight: bold;
+      color: #ff4081;
+      margin-top: 10px;
+    }
+
+
   @media screen and (min-width: 1024px), (hover: hover) and (pointer: fine) {
       header {
         height: 100px;
@@ -210,15 +218,16 @@
 
   <h2 class="round-text">ROUND <span id="round">1</span> / 10</h2>
 
-  <div class="main-content">
-    <div class="image-box">
-      <img id="reference-img" src="" alt="기준 이미지">
-    </div>
-    <div class="camera-box">
-      <video id="video" autoplay muted playsinline></video>
-      <canvas id="guide-canvas" width="320" height="240"></canvas>
-    </div>
+<div class="main-content">
+  <div class="image-box">      
+    <img id="reference-img" src="" alt="기준 이미지" style="display: none;">
+    <div id="ref-message" class="ref-message">무표정 사진을 찍어주세요</div>
   </div>
+  <div class="camera-box">
+    <video id="video" autoplay muted playsinline></video>
+    <canvas id="guide-canvas" width="320" height="240"></canvas>
+  </div>
+</div>
 
   <div class="button-wrapper">
     <button id="submit-btn">사진 제출</button>

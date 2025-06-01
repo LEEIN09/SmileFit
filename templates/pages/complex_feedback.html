@@ -10,15 +10,14 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script type="module" src="/scripts/complex_feedback.js"></script>
   <style>
-    body {
-      margin: 0;
-      font-family: 'SUIT', sans-serif;
-      background-color: white;
-      color: #333;
-      opacity: 0;
-      transition: opacity 0.4s ease;
-      min-height: 100vh;
-    }
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: 'SUIT', sans-serif;
+        background: #f8f9fa;
+        color: #333;
+      }
+
 
     body.loaded {
       opacity: 1;
@@ -84,8 +83,7 @@
     }
 
     .report-section {
-      border: 1px solid #ccc;
-      padding: 12px;
+      border: 1px solid #ccc;      
       margin-bottom: 20px;
       border-radius: 8px;
     }
@@ -106,21 +104,6 @@
       border: 2px solid #999;
     }
 
-    .grid-2 {
-      display: flex;
-      flex-direction: row;  /* 무조건 가로 정렬 */
-      justify-content: space-between;
-      align-items: stretch;
-      gap: 16px;
-      flex-wrap: nowrap;    /* ❗줄바꿈 금지 */
-    }
-
-    .grid-2 > div {
-      flex: 1 1 0;
-      min-width: 0;
-      overflow-wrap: break-word;
-    }
-
     .section-title {
       font-weight: bold;
       margin-bottom: 10px;
@@ -129,7 +112,49 @@
       padding-bottom: 4px;
     }
 
+    .row-box {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 5vw;
+      margin: 2vh 0;
+      flex-wrap: wrap; 
+      max-width: 100vw;
+    }
+
+    .feedback-box {
+      flex: 1 1 40%;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      padding: 16px;      
+      min-width: 280px;
+      max-width: 500px;
+    }
+
+    .name-input-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      margin: 40px;
+    }
+
+    .name-input-row label {
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .name-input-row input {
+      padding: 8px 12px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      width: 160px;
+    }
+
     @media screen and (min-width: 1024px), (hover: hover) and (pointer: fine) {
+
       header {
         height: 100px;
         font-size: 28px;
@@ -146,7 +171,34 @@
         width: 80px;
         height: 100px;
       }
+
+    .row-box {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 2vw;
+      margin: 2vh auto; 
+      max-width: 70vw;
     }
+
+    .report-section {
+      max-width: 70vw;
+      margin: 20px auto;
+    }
+
+    .feedback-box {
+      flex: 1 1 0;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      padding: 16px;    
+      min-width: 200px;
+      max-width: 34vw;
+    }
+
+  }
+
+    
   </style>
 </head>
 <body>
@@ -155,6 +207,10 @@
 
   <div class="container">
     <div class="main-message">운동을 완료했습니다!</div>
+    <div class="name-input-row">
+      <label for="user-name">이름을 입력하세요:</label>
+      <input type="text" id="user-name" placeholder="홍길동" />
+    </div>
     <button id="analyze-btn">운동 분석하기</button>
 
     <div id="report">
@@ -172,25 +228,26 @@
         <div id="user-images" class="image-row"></div>
       </div>
 
-      <div class="grid-2 report-section">
-        <div>
-          <div class="section-title">가장 많이 사용된 근육 TOP 5</div>
-          <ul id="top-muscle-list" style="padding-left: 16px;"></ul>
+      <div class="row-box">
+        <div class="feedback-box">
+          <h4>가장 많이 사용된 근육 TOP 5</h4>
+          <ul id="top-muscle-list"></ul>
         </div>
-        <div>
-          <div class="section-title">가장 많이 운동한 동작 TOP 5</div>
-          <ul id="top-expression-list" style="padding-left: 16px;"></ul>
+        <div class="feedback-box">
+          <h4>가장 많이 사용한 표정 동작 TOP 5</h4>
+          <ul id="top-expression-list"></ul>
         </div>
       </div>
 
-      <div class="grid-2 report-section">
-        <div>
-          <div class="section-title">라운드별 기준사진과의 일치율</div>
-          <canvas id="chart" style="width: 100%; max-width: 400px; aspect-ratio: 1 / 1;"></canvas>
+      
+      <div class="row-box">
+        <div class="feedback-box">
+          <h4>라운드별 유사도</h4>
+          <canvas id="chart"></canvas>
         </div>
-        <div>
-          <div class="section-title">종합 피드백</div>
-          <div id="feedback-comment"></div>
+        <div class="feedback-box">
+          <h4>종합 피드백</h4>
+          <div id="summary-text">분석 결과 요약이 여기에 표시됩니다.</div>
         </div>
       </div>
     </div>

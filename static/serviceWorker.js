@@ -1,6 +1,4 @@
-const CACHE_NAME = "smilefit-cache-v1";
-
-// 여기에 캐시할 파일 경로를 정확히 써주세요
+const CACHE_NAME = "smilefit-cache-v2";  // ✅ 버전 변경 중요!
 const urlsToCache = [
   "/",
   "/manifest.json",
@@ -10,41 +8,36 @@ const urlsToCache = [
   "/icons/icon-512.png"
 ];
 
-// ✅ 설치 단계
+// ✅ 설치 단계 - 캐시 저장
 self.addEventListener("install", (event) => {
-  self.skipWaiting();  // ✅ 새 SW 즉시 활성화
-
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(urlsToCache);
-    }).catch((err) => {
-      console.error("❌ 캐시 등록 실패:", err);
     })
   );
-  console.log("✅ Service Worker 설치 완료");
 });
 
-// ✅ 활성화 단계
+// ✅ 활성화 단계 - 이전 캐시 제거
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((cacheNames) =>
+    caches.keys().then((keyList) =>
       Promise.all(
-        cacheNames
-          .filter((name) => name !== CACHE_NAME)
-          .map((name) => caches.delete(name))
+        keyList.map((key) => {
+          if (key !== CACHE_NAME) {
+            return caches.delete(key);  // 🔥 이전 캐시 삭제
+          }
+        })
       )
-    ).then(() => {
-      return self.clients.claim(); // ✅ 모든 클라이언트에 즉시 적용
-    })
+    )
   );
-  console.log("🔄 Service Worker 활성화 및 이전 캐시 정리");
+  return self.clients.claim();
 });
 
-// 요청 처리
+// ✅ fetch - 캐시 대신 항상 네트워크 우선
 self.addEventListener("fetch", (event) => {
   event.respondWith(
-    caches.match(event.request).then((response) => {
-      return response || fetch(event.request);
+    caches.match(event.request).then((cachedResponse) => {
+      return cachedResponse || fetch(event.request);
     })
   );
 });
