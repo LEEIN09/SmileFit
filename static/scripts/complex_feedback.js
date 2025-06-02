@@ -169,54 +169,26 @@ function renderChart(values) {
   });
 }
 
-function getFeedbackPerMuscle(refLandmarks, userLandmarks) {
-  const underused = [];
+function generateSummaryFeedback(avgScore, usedMusclesCount) {
+  const lines = [];
 
-  for (let muscle in MUSCLE_RULES) {
-    const rule = MUSCLE_RULES[muscle];
-    const maxChange = MAX_CHANGES[muscle] || 1;
+  lines.push("오늘도 얼굴 운동 하느라 수고 많았어요! 😊");
 
-    let refSum = 0;
-    let userSum = 0;
-
-    for (let i = 1; i < userLandmarks.length; i++) {
-      const refDist = computeDist(refLandmarks[0], rule.points);
-      const refExprDist = computeDist(refLandmarks[i], rule.points);
-      const refRatio = Math.abs(refExprDist - refDist) / maxChange;
-
-      const userDist = computeDist(userLandmarks[0], rule.points);
-      const userExprDist = computeDist(userLandmarks[i], rule.points);
-      const userRatio = Math.abs(userExprDist - userDist) / maxChange;
-
-      refSum += refRatio;
-      userSum += userRatio;
-    }
-
-    const refAvg = refSum / (userLandmarks.length - 1);
-    const userAvg = userSum / (userLandmarks.length - 1);
-
-    const ratioDiff = userAvg / (refAvg || 1);
-
-    if (ratioDiff < 0.7) {  // 기준치보다 60% 미만 사용 시 "활용 부족"
-      underused.push({
-        muscle,
-        action: MUSCLE_TO_ACTION[muscle],
-        percent: Math.round(ratioDiff * 100)
-      });
-    }
+  if (usedMusclesCount >= 5) {
+    lines.push("다양한 근육들을 골고루 사용하셨습니다. 👏");
+  } else {
+    lines.push("다음에는 더 다양한 근육들을 운동해 보아요! 💪");
   }
 
-  if (underused.length === 0) {
-    return "모든 사용된 근육들이 잘 활성화 되었어요! 👏";
+  if (avgScore >= 0.7) {
+    lines.push("선생님의 사진을 매우 잘 따라했습니다. 👍");
+  } else {
+    lines.push("다음에는 선생님을 더 비슷하게 따라해 보아요! 😊");
   }
 
-  let message = "다음 근육이 상대적으로 덜 활성화 되었어요:\n";
-  underused.forEach(({ muscle, action, percent }) => {
-    message += `- ${action} (${percent}% 활용)\n`;
-  });
+  lines.push("항상 스마일핏과 함께 즐겁고 활기찬 운동 되시길 바랍니다! 🌟");
 
-  message += "이 동작들을 조금 더 집중적으로 연습해볼까요?";
-  return message;
+  return lines.join("<br><br>");
 }
 
 const pieColors = [
@@ -226,7 +198,11 @@ const pieColors = [
 export async function init() {
   document.body.classList.add("loaded");
   document.getElementById("analyze-btn").addEventListener("click", async () => {
+    const analyzeBtn = document.getElementById("analyze-btn");
+    analyzeBtn.disabled = true;
+    analyzeBtn.textContent = "분석 중...";
 
+  try {
   const dateSpan = document.getElementById("report-date");
   const nameInput = document.getElementById("user-name");
 
@@ -248,9 +224,8 @@ export async function init() {
 
     const similarityScores = evaluateRoundScores(refLandmarks, userLandmarks);
     const avgScore = similarityScores.reduce((a, b) => a + b, 0) / similarityScores.length;
-
+    
     renderChart(similarityScores);
-    document.getElementById("summary-text").textContent = getFeedbackPerMuscle(refLandmarks, userLandmarks);
 
     const refContainer = document.getElementById("reference-images");
     refImages.slice(1).forEach(src => {
@@ -265,45 +240,6 @@ export async function init() {
       img.src = src;
       userContainer.appendChild(img);
     });
-
-    // 근육 사용량 계산
-    const topMuscles = Object.entries(MUSCLE_RULES).map(([muscle, rule]) => {
-      let usageSum = 0;
-      let count = 0;
-
-      for (let i = 1; i < userLandmarks.length; i++) {
-        const neutralDist = computeDist(userLandmarks[0], rule.points);
-        const exprDist = computeDist(userLandmarks[i], rule.points);
-        const diff = exprDist - neutralDist;
-
-        let activated = false;
-        if (rule.direction === "increase" && diff > 0) activated = true;
-        if (rule.direction === "decrease" && diff < 0) activated = true;
-
-        // 볼근은 보조 조건 추가: 중앙 입술 변화가 거의 없어야 함
-        if (muscle === "볼근") {
-          const lipChange = computeDist(userLandmarks[0], rule.stable) - computeDist(userLandmarks[i], rule.stable);
-          if (Math.abs(lipChange) > 0.01) activated = false;
-        }
-
-        // 구륜근은 입 벌리기와의 간섭 방지 조건 추가
-        if (muscle === "구륜근") {
-          const lipToNose = computeDist(userLandmarks[i], [14, 1]);
-          if (lipToNose > MAX_CHANGES["익돌근"] / 5) activated = false;
-        }
-
-        if (activated) {
-          const ratio = Math.abs(diff) / (MAX_CHANGES[muscle] || 1);
-          usageSum += ratio;
-          count++;
-        }
-      }
-
-      const avgUsage = count > 0 ? usageSum / count : 0;
-      return { expr: muscle, usage: avgUsage };
-    })
-    .sort((a, b) => b.usage - a.usage)
-    .slice(0, 5);
 
     // 결과 출력
     const topMusclesFull = Object.entries(MUSCLE_RULES).map(([muscle, rule]) => {
@@ -333,6 +269,9 @@ export async function init() {
       }
       return { expr: muscle, usage };
     }).sort((a, b) => b.usage - a.usage);
+
+    const summaryHTML = generateSummaryFeedback(avgScore, topMusclesFull.filter(m => m.usage > 0).length);
+    document.getElementById("summary-text").innerHTML = summaryHTML;
 
     // ✅ Pie chart용 데이터 준비
     const totalUsage = topMusclesFull.reduce((sum, m) => sum + m.usage, 0);
@@ -404,16 +343,56 @@ export async function init() {
       document.getElementById("pie-labels").appendChild(li);
     });
 
-    // 동작 카운팅 기반 top5
     const exprList = document.getElementById("top-expression-list");
-    topMuscles.forEach((m, index) => {
-      const action = MUSCLE_TO_ACTION[m.expr] || m.expr;
-      const li = document.createElement("li");
-      li.textContent = `${index + 1}. ${action}`;
-      li.style.marginBottom = "8px";
-      exprList.appendChild(li);
+    exprList.innerHTML = "";  // 기존 내용 초기화
+
+    Object.entries(MUSCLE_RULES).forEach(([muscle, rule]) => {
+      let activatedOnce = false;
+
+      for (let i = 1; i < userLandmarks.length; i++) {
+        const neutralDist = computeDist(userLandmarks[0], rule.points);
+        const exprDist = computeDist(userLandmarks[i], rule.points);
+        const diff = exprDist - neutralDist;
+
+        let activated = false;
+        if (rule.direction === "increase" && diff > 0) activated = true;
+        if (rule.direction === "decrease" && diff < 0) activated = true;
+
+        // 볼근 조건
+        if (muscle === "볼근") {
+          const lipChange = computeDist(userLandmarks[0], rule.stable) - computeDist(userLandmarks[i], rule.stable);
+          if (Math.abs(lipChange) > 0.01) activated = false;
+        }
+
+        // 구륜근 조건
+        if (muscle === "구륜근") {
+          const verticalChange = computeDist(userLandmarks[0], [14, 1]) - computeDist(userLandmarks[i], [14, 1]);
+          const maxJaw = MAX_CHANGES["익돌근"] || 1;
+          if (Math.abs(verticalChange) > maxJaw / 5) activated = false;
+        }
+
+        if (activated) {
+          activatedOnce = true;
+          break;
+        }
+      }
+
+      if (activatedOnce) {
+        const li = document.createElement("li");
+        const action = MUSCLE_TO_ACTION[muscle] || "-";
+        li.innerHTML = `<strong>${muscle}</strong> – ${action}`;
+        li.style.marginBottom = "6px";
+        exprList.appendChild(li);
+      }
     });
 
     
+      analyzeBtn.textContent = "분석 완료 ✅";
+    } catch (err) {
+      analyzeBtn.textContent = "분석 실패 ❌";
+      console.error(err);
+    } finally {
+      analyzeBtn.disabled = false;
+    }
   });
 }
