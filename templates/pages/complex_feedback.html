@@ -107,7 +107,15 @@
     .section-title {
       font-weight: bold;
       margin-bottom: 10px;
-      font-size: 16px;
+      font-size: 24px;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 4px;
+    }
+
+    .section-title2 {
+      font-weight: bold;
+      margin-bottom: 10px;
+      font-size: 18px;
       border-bottom: 1px solid #ccc;
       padding-bottom: 4px;
     }
@@ -219,19 +227,22 @@
       </div>
 
       <div class="report-section">
-        <div class="section-title">기준 사진 (10장)</div>
+        <div class="section-title2">기준 사진 (10장)</div>
         <div id="reference-images" class="image-row"></div>
       </div>
 
       <div class="report-section">
-        <div class="section-title">사용자 사진 (10장)</div>
+        <div class="section-title2">사용자 사진 (10장)</div>
         <div id="user-images" class="image-row"></div>
       </div>
 
       <div class="row-box">
         <div class="feedback-box">
           <h4>가장 많이 사용된 근육 TOP 5</h4>
-          <ul id="top-muscle-list"></ul>
+          <div style="display: flex; justify-content: center; align-items: center; margin-top: 30px; padding: 0; max-height: 180px;">
+            <canvas id="topMusclePieChart" style="max-width: 180px;"></canvas>
+            <ul id="pie-labels" style="margin-left: 40px; list-style: none; padding: 0; text-align: left;"></ul>
+          </div>
         </div>
         <div class="feedback-box">
           <h4>가장 많이 사용한 표정 동작 TOP 5</h4>
@@ -247,7 +258,7 @@
         </div>
         <div class="feedback-box">
           <h4>종합 피드백</h4>
-          <div id="summary-text">분석 결과 요약이 여기에 표시됩니다.</div>
+          <div id="summary-text" style="white-space: pre-line; line-height: 24px;">분석 결과 요약이 여기에 표시됩니다.</div>
         </div>
       </div>
     </div>
