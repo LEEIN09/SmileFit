@@ -65,7 +65,8 @@
             position: relative;
         }
 
-        .image-box img, .camera-box img, canvas {
+        /* video 태그에 직접 스타일 적용 */
+        .camera-box video, .image-box img, canvas { 
             width: 320px;
             height: 240px;
             border-radius: 10px;
@@ -126,7 +127,7 @@
             <img id="reference-img" src="" alt="기준 이미지">
         </div>
         <div class="camera-box">
-            <img id="video-feed" src="{{ url_for('video_feed') }}" width="320" height="240" alt="웹캠 스트림">
+            <video id="video-element" width="320" height="240" autoplay playsinline></video>
             <canvas id="guide-canvas" width="320" height="240" style="position: absolute; top: 0; left: 0;"></canvas>
         </div>
     </div>
@@ -136,7 +137,8 @@
     <div id="check-mark">✅</div>
 
     <script>
-        const videoFeedElement = document.getElementById('video-feed');
+        // const videoFeedElement = document.getElementById('video-feed'); // 기존 img 태그 참조 제거
+        const videoElement = document.getElementById('video-element'); // 새로 추가된 video 태그 참조
         const guideCanvas = document.getElementById('guide-canvas');
         const guideCtx = guideCanvas.getContext('2d');
         const referenceImg = document.getElementById('reference-img');
@@ -150,7 +152,7 @@
 
         // 운동 설정 (총 8라운드, 2세트, 세트당 4라운드)
         const TOTAL_ROUNDS_PER_SET = 4; // 각 세트당 라운드 수
-        const TOTAL_SETS = 2;         // 총 세트 수
+        const TOTAL_SETS = 2;          // 총 세트 수
         const OVERALL_TOTAL_ROUNDS = TOTAL_ROUNDS_PER_SET * TOTAL_SETS; // 전체 라운드 수 (8)
 
         // URL 파라미터에서 현재 세트 번호 받아오기 (Flask에서 전달받음)
@@ -169,31 +171,52 @@
             window.location.href = "{{ url_for('complex') }}";
         }
 
+        // --- 웹캠 스트림 시작 함수 (새로 추가) ---
+        async function startWebcam() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                videoElement.srcObject = stream;
+                // 비디오 스트림이 로드되면 캔버스 크기 조정
+                videoElement.onloadedmetadata = () => {
+                    // 비디오 엘리먼트의 실제 해상도를 캔버스에 적용
+                    guideCanvas.width = videoElement.videoWidth;
+                    guideCanvas.height = videoElement.videoHeight;
+                    // 웹캠이 로드된 후에 비디오 요소를 재생하여 스트림이 시작되도록 보장
+                    videoElement.play(); 
+                };
+                videoElement.onerror = (e) => { // 비디오 재생 중 오류 처리
+                    console.error("비디오 엘리먼트 오류:", e);
+                    alert("비디오 스트림 재생 중 오류가 발생했습니다. 브라우저 콘솔을 확인해주세요.");
+                };
+            } catch (err) {
+                console.error("웹캠 접근 오류:", err);
+                alert("웹캠을 켜는 데 문제가 발생했습니다. 권한을 확인하거나 다른 프로그램에서 사용 중인 웹캠을 닫아주세요.");
+            }
+        }
+
         // 타원 가이드 그리기 (기존 로직 유지)
         function drawEllipse() {
             guideCtx.clearRect(0, 0, guideCanvas.width, guideCanvas.height);
+            // 비디오 엘리먼트가 준비되었을 때만 가이드를 그립니다.
+            if (videoElement.readyState === videoElement.HAVE_ENOUGH_DATA) {
+                 // 비디오 위에 랜드마크를 그리는 코드가 여기에 있을 수 있음
+                 // (예: MediaPipe JS 버전에서 랜드마크를 받아 그리는 로직)
+            }
             guideCtx.beginPath();
             guideCtx.ellipse(guideCanvas.width / 2, guideCanvas.height / 2, 80, 100, 0, 0, 2 * Math.PI);
             guideCtx.strokeStyle = 'rgba(0, 255, 0, 0.4)';
             guideCtx.lineWidth = 3;
             guideCtx.stroke();
         }
-        setInterval(drawEllipse, 100);
+        // setInterval(drawEllipse, 100); // 비디오 스트림이 없어져도 가이드는 계속 그려질 수 있으므로, 웹캠 시작 후 또는 비디오가 있을 때만 호출하는 것이 좋습니다.
 
         // 라운드 이미지 및 텍스트 업데이트
         function updateDisplay() {
-            // 이미지 인덱스 계산: (현재 세트 - 1) * 세트당 라운드 수 + 현재 세트 내 라운드 번호
             const imageIndex = ((currentSet - 1) * TOTAL_ROUNDS_PER_SET) + currentRoundInSet;
-            
-            // 8라운드 운동의 경우 1-8번 이미지가 모두 필요합니다.
-            // 만약 10번까지 이미지가 있고 그 이상 라운드(예: 12라운드)를 한다면:
-            // const actualImageNumber = (imageIndex <= 10) ? imageIndex : (imageIndex - 1) % 10 + 1;
-            // 지금은 8라운드이므로 imageIndex를 그대로 사용합니다.
             const actualImageNumber = imageIndex; 
 
             referenceImg.src = `/static/images/teachers/${teacher}/${teacher}${actualImageNumber}.png`;
             
-            // 현재 화면에 표시될 전체 라운드 번호 (예: 1~8)
             displayCurrentRound.textContent = totalCompletedRounds + currentRoundInSet; 
             displayTotalRounds.textContent = OVERALL_TOTAL_ROUNDS;
             displayCurrentSet.textContent = currentSet;
@@ -202,113 +225,107 @@
 
         // --- "사진 제출" 버튼 클릭 이벤트 ---
         submitBtn.onclick = async () => {
-            if (!videoFeedElement.src || videoFeedElement.src.startsWith('data:')) { 
-                alert('웹캠 영상이 준비되지 않았습니다. 페이지를 새로고침 해주세요.');
+            // 웹캠 스트림이 준비되지 않았다면 경고
+            if (!videoElement.srcObject || videoElement.readyState !== videoElement.HAVE_ENOUGH_DATA) { 
+                alert('웹캠 영상이 아직 준비되지 않았습니다. 잠시 기다려주세요.');
                 return;
             }
 
+            submitBtn.disabled = true; // 버튼 중복 클릭 방지
             checkMark.style.display = 'block'; 
             setTimeout(() => {
                 checkMark.style.display = 'none'; 
-            }, 1000);
+            }, 800); // 체크마크 표시 시간 0.8초로 설정
 
             // --- 웹캠 프레임 캡처 ---
-            const img = new Image();
-            img.crossOrigin = "Anonymous"; 
-            img.src = videoFeedElement.src + '?t=' + new Date().getTime(); 
+            const captureCanvas = document.createElement('canvas'); // 캡처용 캔버스
+            captureCanvas.width = videoElement.videoWidth;
+            captureCanvas.height = videoElement.videoHeight;
+            const captureCtx = captureCanvas.getContext('2d');
+
+            // <video> 태그의 현재 프레임을 캔버스에 그리기
+            captureCtx.drawImage(videoElement, 0, 0, captureCanvas.width, captureCanvas.height);
             
-            img.onload = async () => {
-                const captureCanvas = document.createElement('canvas');
-                captureCanvas.width = img.width;
-                captureCanvas.height = img.height;
-                const captureCtx = captureCanvas.getContext('2d');
+            // 캡처된 이미지를 Blob으로 변환
+            captureCanvas.toBlob(async (blob) => {
+                if (!blob) {
+                    alert('이미지 캡처에 실패했습니다.');
+                    console.error('Canvas to Blob failed. Blob is null.');
+                    submitBtn.disabled = false; // 실패 시 버튼 활성화
+                    return;
+                }
 
-                captureCtx.drawImage(img, 0, 0, captureCanvas.width, captureCanvas.height);
+                // --- 서버로 이미지 데이터 전송 ---
+                const formData = new FormData();
+                const currentOverallRound = totalCompletedRounds + currentRoundInSet; 
                 
-                // 캡처된 이미지를 Blob으로 변환
-                captureCanvas.toBlob(async (blob) => {
-                    if (!blob) {
-                        alert('이미지 캡처에 실패했습니다.');
-                        console.error('Canvas to Blob failed.');
-                        return;
-                    }
+                console.log("Submitting round_number:", currentOverallRound);
+                // Blob 형태로 직접 전송
+                formData.append('image_data', blob, `round_${currentOverallRound}_${teacher}.jpg`); 
+                formData.append('round_number', currentOverallRound); 
+                formData.append('teacher_id', teacher); 
 
-                    // --- 서버로 이미지 데이터 전송 ---
-                    const formData = new FormData();
-                    // Firebase에 저장될 라운드 번호는 전체 라운드 번호입니다.
-                    const currentOverallRound = totalCompletedRounds + currentRoundInSet; 
-                    
-                    console.log("Submitting round_number:", currentOverallRound); // <--- 이 로그를 확인해주세요!
-                    formData.append('round_number', currentOverallRound); 
-                    
-                    formData.append('photo', blob, `round_${currentOverallRound}_${teacher}.jpg`);
-                    formData.append('teacher_id', teacher); 
+                try {
+                    const response = await fetch('/submit_au_data_with_image', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const result = await response.json();
 
-                    try {
-                        const response = await fetch('/submit_au_data_with_image', {
-                            method: 'POST',
-                            body: formData
-                        });
-                        const result = await response.json();
-
-                        if (response.ok) {
-                            console.log('Firebase 저장 성공:', result.message, '사진 URL:', result.photo_url, '스코어:', result.overall_score, '라운드:', currentOverallRound);
-                        } else {
-                            console.error('Firebase 저장 실패:', result.message);
-                            alert(`데이터 저장 실패: ${result.message}`);
+                    if (response.ok) { 
+                        console.log('Firebase 저장 성공:', result.message || '메시지 없음', '사진 URL:', result.photo_url, '스코어:', result.predicted_score, '라운드:', currentOverallRound); 
+                        
+                        // 라운드 진행 로직
+                        currentRoundInSet++; 
+                        if (currentRoundInSet > TOTAL_ROUNDS_PER_SET) { 
+                            if (currentSet < TOTAL_SETS) { 
+                                submitBtn.textContent = '다음 세트 안내';
+                                submitBtn.style.backgroundColor = '#007bff';
+                                submitBtn.style.boxShadow = '0 4px 10px rgba(0, 123, 255, 0.5)';
+                                submitBtn.style.color = 'white';
+                                submitBtn.onclick = () => {
+                                    document.body.classList.remove('loaded');
+                                    document.body.classList.add('fade-out');
+                                    setTimeout(() => {
+                                        window.location.href = "{{ url_for('next_set_guidance') }}?teacher_id=" + teacher + "&current_set=" + (currentSet + 1); 
+                                    }, 400);
+                                };
+                            } else { 
+                                submitBtn.textContent = '운동 완료';
+                                submitBtn.style.backgroundColor = '#8e24aa';
+                                submitBtn.style.boxShadow = '0 4px 10px rgba(142, 36, 170, 0.4)';
+                                submitBtn.style.color = 'white';
+                                submitBtn.onclick = () => {
+                                    document.body.classList.remove('loaded');
+                                    document.body.classList.add('fade-out');
+                                    setTimeout(() => {
+                                        window.location.href = "{{ url_for('feedback') }}?teacher_id=" + teacher; 
+                                    }, 400);
+                                };
+                            }
+                        } else { 
+                            updateDisplay(); 
                         }
-                    } catch (error) {
-                        console.error('네트워크 또는 서버 오류:', error);
-                        alert(`데이터 전송 중 오류 발생: ${error.message}`);
+                    } else { 
+                        console.error('서버 응답 오류:', result.message);
+                        alert(`데이터 저장 실패: ${result.message}`);
                     }
-
-                    // 라운드 진행 로직
-                    currentRoundInSet++; // 세트 내 라운드 번호 증가 (제출 후 증가)
-
-                    if (currentRoundInSet > TOTAL_ROUNDS_PER_SET) { // 현재 세트가 완료되면 (예: 4라운드 완료)
-                        if (currentSet < TOTAL_SETS) { // 아직 총 세트가 남아있으면 (예: 1세트 완료)
-                            submitBtn.textContent = '다음 세트 안내';
-                            submitBtn.style.backgroundColor = '#007bff'; // 파란색으로 변경
-                            submitBtn.style.boxShadow = '0 4px 10px rgba(0, 123, 255, 0.5)';
-                            submitBtn.style.color = 'white';
-                            // 버튼 클릭 시 다음 안내 페이지로 이동
-                            submitBtn.onclick = () => {
-                                document.body.classList.remove('loaded');
-                                document.body.classList.add('fade-out');
-                                setTimeout(() => {
-                                    window.location.href = "{{ url_for('next_set_guidance') }}?teacher_id=" + teacher + "&current_set=" + (currentSet + 1); 
-                                }, 400);
-                            };
-                        } else { // 모든 세트까지 완료되면 (예: 2세트(8라운드) 완료)
-                            submitBtn.textContent = '운동 완료';
-                            submitBtn.style.backgroundColor = '#8e24aa';
-                            submitBtn.style.boxShadow = '0 4px 10px rgba(142, 36, 170, 0.4)';
-                            submitBtn.style.color = 'white';
-                            // 버튼 클릭 시 피드백 페이지로 이동
-                            submitBtn.onclick = () => {
-                                document.body.classList.remove('loaded');
-                                document.body.classList.add('fade-out');
-                                setTimeout(() => {
-                                    window.location.href = "{{ url_for('feedback') }}?teacher_id=" + teacher; 
-                                }, 400);
-                            };
-                        }
-                    } else { // 현재 세트 내 라운드가 남아있으면 (1,2,3 라운드, 5,6,7 라운드)
-                        updateDisplay(); // 다음 라운드의 이미지와 텍스트 표시
-                    }
-
-                }, 'image/jpeg'); 
-            };
-            img.onerror = () => {
-                alert('웹캠 이미지 로드 오류로 캡처할 수 없습니다. 페이지를 새로고침 해주세요.');
-                console.error("Failed to load image from videoFeedElement.src");
-            };
+                } catch (error) {
+                    console.error("네트워크 또는 서버 오류:", error);
+                    alert(`데이터 전송 중 오류 발생: ${error.message}`);
+                } finally {
+                    submitBtn.disabled = false; 
+                }
+            }, 'image/jpeg', 0.8); 
         };
 
         // 초기 로드 시
         window.addEventListener('DOMContentLoaded', () => {
             document.body.classList.add('loaded');
-            updateDisplay(); // 초기 디스플레이 설정
+            updateDisplay();
+            startWebcam(); 
+            // 가이드 타원은 웹캠이 시작되고 비디오 엘리먼트의 크기가 확정된 후에 그리는 것이 더 안정적일 수 있습니다.
+            // setInterval(drawEllipse, 100);을 여기에 추가하는 것을 고려해 보세요.
         });
 
         // delayedNav 함수는 홈 버튼 등에서 사용되므로 그대로 유지

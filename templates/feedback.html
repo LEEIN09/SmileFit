@@ -49,7 +49,7 @@
         }
 
         .home-button:hover {
-            background: #e91e63;
+            background-color: #e91e63;
             box-shadow: 0 0 15px #ff4081;
         }
 
@@ -74,9 +74,11 @@
             color: #444;
             margin: 10px 0;
         }
-        .feedback-summary strong {
-            color: #007bff;
-        }
+        /* 점수별 색상 스타일 추가 */
+        .feedback-summary strong.score-good { color: #388e3c; } /* 진한 초록 */
+        .feedback-summary strong.score-ok { color: #ff9800; }  /* 주황 */
+        .feedback-summary strong.score-bad { color: #f44336; }  /* 빨강 */
+
 
         .round-results-container {
             display: flex;
@@ -92,7 +94,8 @@
             border-radius: 10px;
             padding: 15px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-            width: 280px;
+            width: 380px; /* 라운드 카드 너비 증가 */
+            max-width: 380px; /* 모바일에서도 동일하게 제한 */
             text-align: left;
         }
         .round-card h3 {
@@ -118,26 +121,58 @@
             margin-top: 10px;
             border: 1px solid #ddd;
         }
-        .au-details {
-            font-size: 14px;
-            color: #666;
-            margin-top: 10px;
+        /* AU 상세값 토글 영역 스타일 */
+        .au-details-collapsible {
+            height: 0; /* <-- max-height 대신 height: 0으로 시작 */
+            overflow: hidden;
+            transition: height 0.3s ease-out, padding-top 0.3s ease-out; /* <-- height 전환 */
             border-top: 1px dashed #eee;
-            padding-top: 8px;
+            padding-top: 0; 
+        }
+        .au-details-collapsible.expanded {
+            height: auto; /* <-- 높이를 auto로 설정하여 내용만큼 늘어나도록 */ 
+            max-height: none; /* <-- max-height도 none으로 설정 (혹시 모를 제약 제거) */
+            overflow: visible; /* <-- 내용이 넘칠 경우 보이도록 설정 */
+            padding-top: 8px; 
+        }
+        /* AU 상세값 개별 항목 스타일 */
+        .au-details p {
+            margin: 3px 0;
+            font-size: 13px;
+            word-wrap: break-word; /* 긴 텍스트가 컨테이너 안에서 줄바꿈되도록 */
+        }
+        .au-details {
+            display: block; 
         }
 
-        .au-compare-details { /* 비교 결과 표시를 위한 새로운 스타일 */
+
+        .au-compare-details { 
             font-size: 14px;
-            color: #4CAF50; /* 기본 초록색 */
+            color: #4CAF50; 
             margin-top: 5px;
             font-weight: bold;
         }
 
         .au-compare-details.bad {
-            color: #f44336; /* 빨간색 */
+            color: #f44336; 
         }
         .au-compare-details.ok {
-            color: #ff9800; /* 주황색 */
+            color: #ff9800; 
+        }
+        
+        .toggle-au-details-btn {
+            background-color: #6c757d; 
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 12px;
+            margin-top: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+        .toggle-au-details-btn:hover {
+            background-color: #5a6268;
         }
 
         .back-button {
@@ -163,7 +198,7 @@
             }
             .round-card {
                 width: 100%;
-                max-width: 320px; /* 모바일에서 카드 너비 제한 */
+                max-width: 320px; 
             }
         }
     </style>
@@ -189,47 +224,23 @@
 
     <a href="{{ url_for('index') }}" class="back-button">홈으로 돌아가기</a>
 
-    <script src="https://www.gstatic.com/firebasejs/11.8.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore-compat.js"></script>
-
     <script>
-        // Firebase 구성 정보
-        const firebaseConfig = {
-            apiKey: "AIzaSyBUa_nwqKQtd1ERkh6v6U3R0blJtkHfS-w",
-            authDomain: "smilefit-350ea.firebaseapp.com",
-            projectId: "smilefit-350ea",
-            storageBucket: "smilefit-350ea.firebasestorage.app",
-            messagingSenderId: "593006313304",
-            appId: "1:593006313304:web:a73738f0ca5e3384366f2d",
-            measurementId: "G-VZT7ELK3G8"
-        };
-
-        // Firebase 앱 초기화 (compat 버전)
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
-        // Firestore 인스턴스 가져오기 (compat 버전)
-        const db = firebase.firestore(); 
-
-        // URL에서 teacher_id 가져오기
         const urlParams = new URLSearchParams(window.location.search);
         const teacherId = urlParams.get('teacher_id'); 
         
-        // 디버깅을 위해 teacherId가 제대로 넘어왔는지 확인
         console.log("Feedback Page - Received Teacher ID:", teacherId); 
 
-        // 총 라운드 수 (사용자 데이터와 선생님 데이터 불러오기 위함)
-        const OVERALL_TOTAL_ROUNDS_TO_LOAD = 8; // <--- 이 값을 8로 변경합니다!
+        const OVERALL_TOTAL_ROUNDS_TO_LOAD = 8; 
 
         window.addEventListener('DOMContentLoaded', async () => {
-            // DOM 요소들이 완전히 로드된 후에 접근하도록 보장
+            document.body.classList.add('loaded'); 
+
             const roundResultsContainer = document.getElementById('round-results');
             const averageScoreElement = document.getElementById('average-score');
             const highestScoreElement = document.getElementById('highest-score');
             const lowestScoreElement = document.getElementById('lowest-score');
             const overallCommentElement = document.getElementById('overall-comment');
             
-            // 필수 DOM 요소들이 null인지 즉시 확인하는 로그와 방어 로직 추가
             console.log("DOM elements check:", {
                 roundResultsContainer: roundResultsContainer,
                 averageScoreElement: averageScoreElement,
@@ -244,21 +255,27 @@
                 document.body.style.opacity = 1; 
                 return;
             }
-
-            document.body.classList.add('loaded'); // DOM 요소가 안전하게 로드된 후 클래스 추가
             
-            let userResults = [];
-            let teacherReferences = [];
+            let allFeedbackData = { user_data: [], teacher_references: [] };
 
             try {
-                // 1. 사용자 데이터 불러오기 (새로운 API 라우트 사용 - 메모리 기반)
-                const userResponse = await fetch('/get_user_feedback_data');
-                const userDataJson = await userResponse.json();
-                userResults = userDataJson.user_data;
+                const response = await fetch(`/get_user_feedback_data?teacher_id=${teacherId}`);
                 
-                // 서버에서 round_number로 정렬되어 오므로, 클라이언트에서 다시 정렬할 필요 없음
-                console.log("User Results (from memory):", userResults); 
+                if (!response.ok) { 
+                    const errorJson = await response.json();
+                    throw new Error(`서버 응답 오류: ${response.status} - ${errorJson.message || '알 수 없는 오류'}`);
+                }
 
+                allFeedbackData = await response.json();
+                
+                let userResults = allFeedbackData.user_data;
+                let teacherReferences = allFeedbackData.teacher_references;
+
+                userResults.sort((a, b) => a.round_number - b.round_number);
+                teacherReferences.sort((a, b) => a.round_number - b.round_number);
+
+                console.log("User Results (from server):", userResults); 
+                console.log("Teacher References (from server):", teacherReferences); 
 
                 if (userResults.length === 0) {
                     roundResultsContainer.innerHTML = '<p>아직 운동 기록이 없습니다. 운동을 먼저 완료해주세요.</p>';
@@ -269,32 +286,6 @@
                     return;
                 }
 
-                // 2. 선생님 기준 데이터 불러오기 (Firestore 사용)
-                const teacherQuerySnapshot = await db.collection('teacher_au_references') 
-                                                    .where('teacher_id', '==', teacherId) 
-                                                    .orderBy('round_number', 'asc') 
-                                                    .limit(OVERALL_TOTAL_ROUNDS_TO_LOAD) 
-                                                    .get();
-                teacherQuerySnapshot.forEach(doc => {
-                    teacherReferences.push(doc.data());
-                });
-
-                // round_number 기준으로 최종 정렬 (Firebase 쿼리 결과는 순서가 보장되지 않을 수 있으므로)
-                teacherReferences.sort((a, b) => {
-                    const roundNumA = a.round_number !== undefined && a.round_number !== null ? parseInt(a.round_number) : 0;
-                    const roundNumB = b.round_number !== undefined && b.round_number !== null ? parseInt(b.round_number) : 0;
-                    
-                    if (roundNumA !== roundNumB) {
-                        return roundNumA - roundNumB;
-                    }
-                    if (a.timestamp && b.timestamp) {
-                        return a.timestamp.toDate() - b.timestamp.toDate(); 
-                    }
-                    return 0;
-                });
-                console.log("Teacher References (Sorted by round_number):", teacherReferences); 
-
-
                 if (teacherReferences.length === 0) {
                     console.warn("선생님 기준 데이터를 불러오지 못했습니다. 비교가 어렵습니다.");
                     roundResultsContainer.insertAdjacentHTML('afterbegin', '<p style="color: red;">선생님 기준 데이터를 불러올 수 없습니다. 피드백이 제한적입니다.</p>');
@@ -304,44 +295,49 @@
                 let highestSimilarityScore = -1;
                 let lowestSimilarityScore = 101; 
 
-                roundResultsContainer.innerHTML = ''; // 기존 로딩 메시지 제거
+                roundResultsContainer.innerHTML = ''; 
 
-                // 사용자 데이터를 순회하며 각 라운드 카드 생성
                 userResults.forEach((userData, index) => {
-                    // userData.round_number는 이미 서버에서 정확히 받아옴 (null 아님)
                     const roundNum = userData.round_number; 
                     
-                    const userAuValues = userData.au_detail_values || {};
-                    let teacherAuValues = {};
+                    const userAuValues = userData.au_features || {}; 
+                    const userEmbedding = userData.user_embedding || [];
+
+                    let teacherAuValues = {}; 
+                    let teacherEmbedding = []; 
                     let teacherImagePath = '';
                     let roundSimilarityScore = 0; 
                     
                     const auComparisonHtml = []; 
 
-                    // --- 디버깅 로그 추가 ---
-                    console.log(`Processing User Round: ${roundNum}`);
-                    console.log(`Searching for Teacher Data for Round: ${roundNum}`);
-
-                    // 해당 라운드의 선생님 데이터 찾기
-                    // round_number가 숫자형인지 확실히 변환하여 비교
                     const matchingTeacherData = teacherReferences.find(tData => 
                         (tData.round_number !== undefined && tData.round_number !== null) && 
                         parseInt(tData.round_number) === parseInt(roundNum)
                     ); 
                     
-                    console.log(`Found Matching Teacher Data for Round ${roundNum}:`, matchingTeacherData);
-                    // --- 디버깅 로그 추가 끝 ---
-
                     if (matchingTeacherData) {
                         teacherAuValues = matchingTeacherData.au_detail_values || {};
+                        teacherEmbedding = matchingTeacherData.embedding || []; 
                         teacherImagePath = matchingTeacherData.image_path_static || '';
                         
-                        // --- AU 비교 및 점수 산출 로직 (핵심) ---
-                        let individualAuSimilarities = [];
+                        let distance = 0;
+                        if (userEmbedding.length === teacherEmbedding.length && userEmbedding.length > 0) {
+                            let sumSq = 0;
+                            for (let i = 0; i < userEmbedding.length; i++) {
+                                sumSq += Math.pow(userEmbedding[i] - teacherEmbedding[i], 2);
+                            }
+                            distance = Math.sqrt(sumSq);
+                        } else {
+                            console.warn("경고: 임베딩 차원이 일치하지 않거나 비어있어 유사도 계산 불가.");
+                        }
+                        // roundSimilarityScore는 app.py에서 계산된 predicted_score를 사용
+                        roundSimilarityScore = userData.predicted_score; 
 
-                        for (const auKey in userAuValues) { 
-                            if (auKey.endsWith('_w')) continue; 
-                            
+                        // --- AU 비교 피드백 (모든 40개 AU 표시, _w 필터링 제거) ---
+                        // AU 이름을 정렬하여 표시하여 가독성 높임
+                        const allAuKeysToDisplay = Object.keys(userAuValues).sort(); 
+
+                        for (const auKey of allAuKeysToDisplay) { 
                             const userVal = userAuValues[auKey] || 0;
                             const teacherVal = teacherAuValues[auKey] || 0;
 
@@ -362,7 +358,6 @@
                             }
 
                             const auSimilarityPercent = similarity * 100; 
-                            individualAuSimilarities.push(auSimilarityPercent); 
                             
                             let comment = "";
                             let className = ""; 
@@ -384,70 +379,92 @@
                             `);
                         }
                         
-                        if (individualAuSimilarities.length > 0) {
-                            roundSimilarityScore = individualAuSimilarities.reduce((sum, val) => sum + val, 0) / individualAuSimilarities.length;
-                        } else {
-                            roundSimilarityScore = 0;
-                        }
-                        
                         totalOverallSimilarityScore += roundSimilarityScore;
                         if (roundSimilarityScore > highestSimilarityScore) highestSimilarityScore = roundSimilarityScore;
-                        if (roundSimilarityScore < lowestSimilarityScore) lowestSimilarityScore = roundSimilarityScore;
+                        if (roundSimilarityScore < lowestSimilarityScore) lowestSimilarityScore = roundSimilarityScore; 
 
                     } else {
-                        // teacherId가 넘어왔지만 해당 라운드의 선생님 데이터가 없는 경우
                         console.warn(`라운드 ${roundNum}에 대한 선생님 기준 데이터를 찾을 수 없습니다. (teacherId: ${teacherId})`);
-                        roundSimilarityScore = 0;
+                        roundSimilarityScore = userData.predicted_score !== undefined ? userData.predicted_score : 0; 
                         auComparisonHtml.push('<p style="color: red;">선생님 데이터 없음 (라운드 ${roundNum})</p>'); 
                     }
-                    // --- AU 비교 및 점수 산출 로직 끝 ---
-
-
+                    
                     const roundCardHtml = `
                         <div class="round-card">
                             <h3>ROUND ${roundNum}</h3>
                             <p>유사도 점수: <strong>${roundSimilarityScore.toFixed(2)}</strong></p>
-                            <div class="au-details">
-                                <h4>내 AU 값:</h4>
-                                ${Object.entries(userAuValues).filter(([key, val]) => !key.endsWith('_w')).map(([key, value]) => `<p>${key}: ${value.toFixed(2)}</p>`).join('') || '<p>내 AU 정보 없음</p>'}
-                            </div>
                             ${userData.photo_url && userData.photo_url !== 'no_image_provided' ? 
-                                `<img src="${userData.photo_url}" alt="라운드 ${roundNum} 사용자 사진">` :
+                                `<img src="${userData.photo_url}" alt="라운드 ${roundNum} 사용자 사진" style="width: 100%; height: auto;">` :
                                 '<p>캡처된 사진 없음</p>'}
                             
-                            ${teacherImagePath ? `<img src="${teacherImagePath}" alt="라운드 ${roundNum} 선생님 사진" style="margin-top: 10px;">` : ''}
-                            <div class="au-details" style="margin-top: 10px;">
-                                <h4>선생님 AU 값:</h4>
-                                ${Object.entries(teacherAuValues).filter(([key, val]) => !key.endsWith('_w')).map(([key, value]) => `<p>${key}: ${value.toFixed(2)}</p>`).join('') || '<p>선생님 AU 정보 없음</p>'}
-                            </div>
+                            ${teacherImagePath ? `<img src="${teacherImagePath}" alt="라운드 ${roundNum} 선생님 사진" style="margin-top: 10px; width: 100%; height: auto;">` : ''}
+                            
+                            <button class="toggle-au-details-btn">AU 상세 분석 보기</button>
+                            <div class="au-details-collapsible">
+                                <div class="au-details">
+                                    <h4>내 AU 값:</h4>
+                                    ${Object.entries(userAuValues).map(([key, value]) => `<p>${key}: ${value.toFixed(2)}</p>`).join('') || '<p>내 AU 정보 없음</p>'}
+                                </div>
+                                
+                                <div class="au-details" style="margin-top: 10px;">
+                                    <h4>선생님 AU 값:</h4>
+                                    ${Object.entries(teacherAuValues).map(([key, value]) => `<p>${key}: ${value.toFixed(2)}</p>`).join('') || '<p>선생님 AU 정보 없음</p>'}
+                                </div>
 
-                            <div class="au-details" style="margin-top: 15px;">
-                                <h4>AU 비교 피드백:</h4>
-                                ${auComparisonHtml.join('') || '<p>비교 데이터 없음</p>'}
+                                <div class="au-details" style="margin-top: 15px;">
+                                    <h4>AU 비교 피드백:</h4>
+                                    ${auComparisonHtml.join('') || '<p>비교 데이터 없음</p>'}
+                                </div>
                             </div>
                         </div>
                     `;
-                    roundResultsContainer.insertAdjacentHTML('beforeend', roundCardHtml);
-                });
+                    // HTML 문자열을 직접 요소로 변환하여 삽입 후 이벤트 리스너 연결
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = roundCardHtml.trim(); 
+                    const newRoundCard = tempDiv.firstChild; 
 
-                averageScoreElement.textContent = (totalOverallSimilarityScore / userResults.length).toFixed(2);
+                    roundResultsContainer.appendChild(newRoundCard); 
+
+                    const toggleButton = newRoundCard.querySelector('.toggle-au-details-btn');
+                    const collapsibleDiv = newRoundCard.querySelector('.au-details-collapsible');
+
+                    if (toggleButton && collapsibleDiv) {
+                        toggleButton.addEventListener('click', () => {
+                            if (collapsibleDiv.classList.contains('expanded')) {
+                                collapsibleDiv.classList.remove('expanded');
+                                toggleButton.textContent = 'AU 상세 분석 보기';
+                            } else {
+                                collapsibleDiv.classList.add('expanded');
+                                toggleButton.textContent = 'AU 상세 분석 숨기기';
+                            }
+                        });
+                    }
+                }); 
+
+                // --- 상단 요약 점수 및 코멘트 업데이트 (색상 추가) ---
+                const finalAverageScore = totalOverallSimilarityScore / userResults.length;
+                averageScoreElement.textContent = finalAverageScore.toFixed(2);
+                averageScoreElement.className = getScoreClassName(finalAverageScore); 
+
                 highestScoreElement.textContent = highestSimilarityScore === -1 ? 'N/A' : highestSimilarityScore.toFixed(2);
+                highestScoreElement.className = getScoreClassName(highestSimilarityScore); 
+
                 lowestScoreElement.textContent = lowestSimilarityScore === 101 ? 'N/A' : lowestSimilarityScore.toFixed(2);
+                lowestScoreElement.className = getScoreClassName(lowestSimilarityScore); 
                 
                 let overallComment = '';
-                const averageSimilarityScore = totalOverallSimilarityScore / userResults.length;
-                if (averageSimilarityScore >= 80) {
+                if (finalAverageScore >= 80) {
                     overallComment = '아주 훌륭한 운동 수행 능력을 보여주셨습니다! 표정 근육을 잘 사용하고 계시네요!';
-                } else if (averageSimilarityScore >= 60) {
+                } else if (finalAverageScore >= 60) {
                     overallComment = '좋은 운동이었습니다! 몇몇 표정에서 개선의 여지가 있습니다.';
                 } else {
                     overallComment = '조금 더 연습이 필요해 보입니다. 각 라운드별 점수를 확인하고 자세를 교정해보세요.';
                 }
                 overallCommentElement.textContent = overallComment;
-
+                // ----------------------------------------------------
 
             } catch (error) {
-                console.error("Firebase에서 데이터를 불러오는 중 오류 발생:", error);
+                console.error("데이터를 불러오는 중 오류 발생:", error);
                 roundResultsContainer.innerHTML = '<p>운동 기록을 불러오는 데 실패했습니다. 다시 시도해주세요.</p>';
                 averageScoreElement.textContent = '오류';
                 highestScoreElement.textContent = '오류';
@@ -455,6 +472,25 @@
                 overallCommentElement.textContent = '데이터 로드 중 문제가 발생했습니다.';
             }
         });
+
+        // 점수 클래스 반환 함수 (0-100점 스케일)
+        function getScoreClassName(score) {
+            if (score >= 80) return 'score-good';
+            if (score >= 60) return 'score-ok';
+            return 'score-bad';
+        }
+
+        // 페이지 로드 후 투명도 조절
+        document.body.classList.add('loaded');
+
+        // delayedNav 함수는 홈 버튼 등에서 사용되므로 그대로 유지
+        function delayedNav(url) {
+            document.body.classList.remove('loaded');
+            document.body.classList.add('fade-out');
+            setTimeout(() => {
+                window.location.href = url;
+            }, 400);
+        }
     </script>
 
 </body>
