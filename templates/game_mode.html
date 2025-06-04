@@ -5,7 +5,7 @@
   <title>게임 모드 선택 | SMILE FIT</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=SUIT:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    /* 💡 페이드인 기본 세팅 */
+    /* ... (기존 스타일은 그대로 유지) ... */
     body {
       opacity: 0;
       transition: opacity 0.8s ease;
@@ -140,27 +140,32 @@
     <div class="mode-box">
       <div class="mode-title">표정 따라하기 모드</div>
       <div class="mode-desc">기준 이미지를 보고 똑같이 따라하며 점수를 받아요.</div>
-      <button class="mode-btn" onclick="delayedNav('{{ url_for('game_follow') }}')">시작하기</button>
+      <button class="mode-btn" onclick="delayedNav('{{ url_for('play_tower_page') }}', 'follow_expression')">시작하기</button>
     </div>
     <div class="mode-box">
       <div class="mode-title">감정 표현하기 모드</div>
       <div class="mode-desc">감정 키워드에 맞게 표정을 지어보고 평가받아요.</div>
-      <button class="mode-btn" onclick="delayedNav('{{ url_for('game_emotion') }}')">시작하기</button>
+      <button class="mode-btn" onclick="delayedNav('{{ url_for('play_tower_page') }}', 'emotion_expression')">시작하기</button>
     </div>
   </div>
 
-  <!-- 🎬 페이드인 스크립트 -->
   <script>
     window.addEventListener('DOMContentLoaded', () => {
       document.body.classList.add('loaded');
     });
     
-    function delayedNav(url) {
+    // 👇 delayedNav 함수 수정: mode 파라미터 추가 및 URL에 쿼리 스트링으로 전달 👇
+    function delayedNav(baseUrl, mode) { // mode 파라미터 추가
+      let finalUrl = baseUrl;
+      if (mode) { // mode 값이 있다면 URL에 ?mode=값 형태로 추가
+        finalUrl += (baseUrl.includes('?') ? '&' : '?') + 'mode=' + encodeURIComponent(mode);
+      }
+      
       document.body.classList.remove('loaded');
       document.body.classList.add('fade-out');
       setTimeout(() => {
-        window.location.href = url;
-      }, 400);
+        window.location.href = finalUrl;
+      }, 400); // 페이드아웃 시간 (0.8s의 절반) 보다 약간 길게 설정하거나, transitionend 이벤트를 사용하는 것이 더 정확할 수 있습니다.
     }
   </script>
 
