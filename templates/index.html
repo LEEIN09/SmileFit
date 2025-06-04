@@ -228,58 +228,67 @@
       'focus': '/pages/focus.html',
       'focus_fit': '/pages/focus_fit.html',
       'complex_feedback': '/pages/complex_feedback.html',
-      'focus_feedback': '/pages/focus_feedback.html'
+      'focus_feedback': '/pages/focus_feedback.html',
+      'face_emotion': '/tower_defense_game.html?mode=emotion_expression',
+      'face_follow': '/tower_defense_game.html?mode=follow_expression'
     };
 
     let currentModule = null;
     const pageCache = new Map();
 
-    async function loadPage(route) {
-      const path = routes[route]; // 이 줄은 기존 코드에서 유지
-      if (!path) return;
+async function loadPage(route) {
+  const path = routes[route];
+  if (!path) return;
 
-      if (currentModule?.cleanup) currentModule.cleanup();
+  // ✅ 기존 페이지 전환 로직 유지
+  if (currentModule?.cleanup) currentModule.cleanup();
+  document.body.classList.remove('loaded');
+  document.body.classList.add('fade-out');
 
-      document.body.classList.remove('loaded');
-      document.body.classList.add('fade-out');
-
-      setTimeout(async () => {
-        try {
-          let html;
-          if (pageCache.has(route)) {
-            html = pageCache.get(route);
-          } else {
-            const res = await fetch(path);
-            html = await res.text();
-            pageCache.set(route, html);
-          }
-
-          const temp = document.createElement('div');
-          temp.innerHTML = html;
-          document.getElementById('app').innerHTML = temp.innerHTML;
-
-          try {
-            const version = "1.0.4";
-            const module = await import(`/scripts/${route}.js?v=${version}`);
-            currentModule = module;
-            console.log("📦 모듈 import 성공:", route);
-            if (module?.init) {
-              console.log("🚀 init() 호출됨:", route);
-              module.init();
-            } else {
-              console.warn("❗ init() 함수 없음:", route);
-            }
-          } catch (e) {
-            console.warn(`⚠️ ${route}.js 없음 또는 import 실패`, e);
-          }
-
-          document.body.classList.remove('fade-out');
-          document.body.classList.add('loaded');
-        } catch (e) {
-          console.error('❌ 페이지 로딩 실패:', e);
-        }
-      }, 400);
+  if (!route.startsWith("face_")) {
+    try {
+      const version = "1.0.4";
+      const module = await import(`/scripts/${route}.js?v=${version}`);
+      currentModule = module;
+      if (module?.init) module.init();
+    } catch (e) {
+      console.warn(`⚠️ ${route}.js 없음 또는 import 실패`, e);
     }
+  }
+
+  setTimeout(async () => {
+    try {
+      let html;
+      if (pageCache.has(route)) {
+        html = pageCache.get(route);
+      } else {
+        const res = await fetch(path);
+        html = await res.text();
+        pageCache.set(route, html);
+      }
+
+      const temp = document.createElement('div');
+      temp.innerHTML = html;
+      document.getElementById('app').innerHTML = temp.innerHTML;
+
+      try {
+        const version = "1.0.4";
+        const module = await import(`/scripts/${route}.js?v=${version}`);
+        currentModule = module;
+        if (module?.init) module.init();
+      } catch (e) {
+        console.warn(`⚠️ ${route}.js 없음 또는 import 실패`, e);
+      }
+
+      document.body.classList.remove('fade-out');
+      document.body.classList.add('loaded');
+    } catch (e) {
+      console.error('❌ 페이지 로딩 실패:', e);
+    }
+  }, 400);
+}
+
+
 
 
     if ("serviceWorker" in navigator) {
@@ -291,5 +300,9 @@
       });
     }
   </script>
+ 
+  
+
+
 </body>
 </html>

@@ -253,12 +253,12 @@ export async function init() {
         if (rule.direction === "increase" && diff > 0) activated = true;
         if (rule.direction === "decrease" && diff < 0) activated = true;
 
-        if (muscle === "볼근") {
+        if (muscle === "협근") {
           const lipChange = computeDist(userLandmarks[0], rule.stable) - computeDist(userLandmarks[i], rule.stable);
           if (Math.abs(lipChange) > 0.01) activated = false;
         }
 
-        if (muscle === "구륜근") {
+        if (muscle === "상순절치근") {
           const verticalChange = computeDist(userLandmarks[0], [14, 1]) - computeDist(userLandmarks[i], [14, 1]);
           const maxJaw = MAX_CHANGES["익돌근"] || 1;
           if (Math.abs(verticalChange) > maxJaw / 5) activated = false;
@@ -359,13 +359,13 @@ export async function init() {
         if (rule.direction === "decrease" && diff < 0) activated = true;
 
         // 볼근 조건
-        if (muscle === "볼근") {
+        if (muscle === "협근") {
           const lipChange = computeDist(userLandmarks[0], rule.stable) - computeDist(userLandmarks[i], rule.stable);
           if (Math.abs(lipChange) > 0.01) activated = false;
         }
 
         // 구륜근 조건
-        if (muscle === "구륜근") {
+        if (muscle === "상순절치근") {
           const verticalChange = computeDist(userLandmarks[0], [14, 1]) - computeDist(userLandmarks[i], [14, 1]);
           const maxJaw = MAX_CHANGES["익돌근"] || 1;
           if (Math.abs(verticalChange) > maxJaw / 5) activated = false;

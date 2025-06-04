@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>표정 따라하기 | SMILE FIT</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=SUIT:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      margin: 0;
+      background: radial-gradient(ellipse at center, #0f2027, #203a43, #2c5364);
+      color: #00ffe1;
+      font-family: 'SUIT', sans-serif;
+      text-align: center;
+    }
+    h1 {
+      margin-top: 20px;
+      font-family: 'Orbitron', sans-serif;
+    }
+    .video-wrapper {
+      position: relative;
+      display: inline-block;
+      margin-top: 20px;
+    }
+    video, canvas {
+      width: 300px;
+      height: 225px;
+      border: 2px solid #00ffe1;
+    }
+    button {
+      margin: 12px 8px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: 2px solid #00ffe1;
+      background: transparent;
+      color: #00ffe1;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    .score {
+      margin-top: 10px;
+    }
+    img {
+      width: 100px;
+      height: 75px;
+      margin: 5px;
+      border: 2px solid #00ffe1;
+    }
+  </style>
+</head>
+<body>
+  <h1>표정 따라하기 모드</h1>
+  <div class="video-wrapper">
+    <video id="follow-video" autoplay muted playsinline></video>
+    <canvas id="follow-guideCanvas" class="guide"></canvas>
+  </div>
+
+  <div style="margin-top: 20px">
+    <div>
+      <img id="follow-imageA" src="" alt="기준 이미지 A">
+      <img id="follow-imageB" src="" alt="기준 이미지 B">
+    </div>
+    <button id="follow-captureA_Btn">😐 A 표정 저장</button>
+    <button id="follow-captureB_Btn" disabled>😀 B 표정 제출</button>
+    <div id="follow-scoreDisplay" class="score">이번 점수: -</div>
+    <div id="session-total-score-display-follow" class="score">총 점수: 0</div>
+  </div>
+
+  <button onclick="closeFacialModal('follow_expression', 'manual_close')" style="position:absolute; top:20px; right:20px;">X 닫기</button>
+
+
+  <script type="module">
+    import { setupFollowMode } from '../scripts/face_follow.js';
+    setupFollowMode();
+  </script>
+</body>
+</html>

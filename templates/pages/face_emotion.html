@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>감정 표현하기 | SMILE FIT</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=SUIT:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      margin: 0;
+      background: radial-gradient(ellipse at center, #0f2027, #203a43, #2c5364);
+      color: #00ffe1;
+      font-family: 'SUIT', sans-serif;
+      text-align: center;
+    }
+    h1 {
+      margin-top: 20px;
+      font-family: 'Orbitron', sans-serif;
+    }
+    .video-wrapper {
+      position: relative;
+      display: inline-block;
+      margin-top: 20px;
+    }
+    video, canvas {
+      width: 300px;
+      height: 225px;
+      border: 2px solid #00ffe1;
+    }
+    button {
+      margin-top: 16px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: 2px solid #00ffe1;
+      background: transparent;
+      color: #00ffe1;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    .score {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>감정 표현하기 모드</h1>
+  <div class="video-wrapper">
+    <video id="emotion-video" autoplay muted playsinline></video>
+    <canvas id="emotion-guideCanvas" class="guide"></canvas>
+  </div>
+
+  <div style="margin-top: 20px">
+    <img id="emotion-referenceImg" src="" alt="기준 감정 이미지" width="150" height="112" style="border:2px solid #00ffe1;" />
+    <div id="emotion-refEmotionDisplay">기준 감정: -</div>
+    <div id="emotion-userEmotionDisplay">당신 감정: -</div>
+    <button id="emotion-captureBtn">📸 표정 제출하고 점수 받기</button>
+    <div id="emotion-scoreDisplay" class="score">이번 점수: -</div>
+    <div id="session-total-score-display-emotion" class="score">총 점수: 0</div>
+  </div>
+
+  <button onclick="closeFacialModal('emotion_expression', 'manual_close')" style="position:absolute; top:20px; right:20px;">X 닫기</button>
+
+  <script type="module">
+    import { setupEmotionMode } from '../scripts/face_emotion.js';
+    setupEmotionMode();
+  </script>
+</body>
+</html>

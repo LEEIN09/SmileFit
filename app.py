@@ -10,6 +10,10 @@ app = Flask(__name__)
 def index():
     return render_template('index.html')
 
+@app.route("/tower_defense_game.html")
+def tower_defense_game():
+    return render_template("tower_defense_game.html")
+
 @app.route('/models/<path:filename>')
 def serve_models(filename):
     return send_from_directory('static/models', filename)

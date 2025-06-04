@@ -17,6 +17,13 @@ export function init() {
   const allIndices = Array.from({ length: 50 }, (_, i) => i + 1);
   const selectedIndices = allIndices.sort(() => Math.random() - 0.5).slice(0, TOTAL_ROUNDS);
 
+  function getDetectorOptions() {
+    return new faceapi.TinyFaceDetectorOptions({
+      inputSize: 224,        // 얼굴을 더 잘 인식하게 해주는 해상도
+      scoreThreshold: 0.3    // 너무 낮으면 잡음, 너무 높으면 인식 실패
+    });
+  }
+
   function updateUI() {
     const imgNum = selectedIndices[currentRound];
     referenceImg.src = `static/images/e_game/e${imgNum}.png`;
@@ -67,7 +74,7 @@ export function init() {
       try {
         await waitForImageLoad(referenceImg);
         const result = await faceapi
-          .detectSingleFace(referenceImg, new faceapi.TinyFaceDetectorOptions())
+          .detectSingleFace(referenceImg, getDetectorOptions())
           .withFaceExpressions();
         if (result) return result;
       } catch (_) {}
@@ -78,7 +85,7 @@ export function init() {
   async function tryRecognizeUserEmotion(canvas, maxAttempts = 3) {
     for (let i = 0; i < maxAttempts; i++) {
       const result = await faceapi
-        .detectSingleFace(canvas, new faceapi.TinyFaceDetectorOptions())
+        .detectSingleFace(canvas, getDetectorOptions())
         .withFaceExpressions();
       if (result) return result;
     }

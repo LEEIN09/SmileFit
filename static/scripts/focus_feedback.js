@@ -143,14 +143,14 @@ export function calculateMuscleUsageScores(neutralLandmarks, expressionLandmarks
       if (diff <= 0) continue; // 변화 없음 or 역방향
 
       // 예외: 볼근은 stable 조건 필요
-      if (muscle === "볼근" && rule.stable) {
+      if (muscle === "협근" && rule.stable) {
         const stableBase = computeDist(neutralLandmarks, rule.stable);
         const stableNow = computeDist(exprLandmarks, rule.stable);
         if (Math.abs(stableNow - stableBase) > 0.01) continue;
       }
 
       // 예외: 구륜근은 입 벌림 영향 제거
-      if (muscle === "구륜근") {
+      if (muscle === "상순절치근") {
         const jawDiff = computeDist(exprLandmarks, [14, 1]) - computeDist(neutralLandmarks, [14, 1]);
         const jawMax = MAX_CHANGES["익돌근"] || 1;
         if (Math.abs(jawDiff) > jawMax / 5) continue;
