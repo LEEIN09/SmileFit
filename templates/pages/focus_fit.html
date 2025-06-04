@@ -41,6 +41,14 @@
       padding: 2vh;
     }
 
+    .ref-message {
+      font-size: 20px;
+      font-weight: bold;
+      color: #ff4081;
+      margin-top: 10px;
+      text-align: center;
+    }
+
     .main-content {
       height: 60vh;
       display: flex;
@@ -212,7 +220,8 @@
 
   <div class="main-content">
     <div class="image-box">
-      <img id="reference-img" src="" alt="기준 이미지" />
+      <img id="reference-img" src="" alt="기준 이미지" style="display: none;">
+      <div id="ref-message" class="ref-message" style="display: none;">무표정 사진을 찍어주세요</div>
     </div>
     <div class="camera-box">
       <video id="video" autoplay muted playsinline></video>

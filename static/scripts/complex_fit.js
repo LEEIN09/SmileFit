@@ -93,7 +93,7 @@ function updateReferenceImage() {
       submitBtn.style.color = 'white';
       submitBtn.onclick = () => {
         console.log("📤 complex_feedback 페이지로 이동 시도 중");
-        sessionStorage.setItem('neutralImage', JSON.stringify(neutralImage)); // ⭐️ 저장
+        sessionStorage.setItem('neutralImage', JSON.stringify(neutralImage)); 
         sessionStorage.setItem('capturedImages', JSON.stringify(capturedImages));
         sessionStorage.setItem('selectedTeacher', teacher);
         sessionStorage.setItem('mode', 'complex');

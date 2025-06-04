@@ -16,7 +16,7 @@ const MAX_CHANGES = {
 };
 
 const MUSCLE_TO_ACTION = {
-  "전두근": "오른쪽 눈썹 올리기",
+  "전두근": "눈썹 올리기",
   "안륜근": "눈 작게 뜨기",
   "추미근": "미간 조이기",
   "콧방울올림근": "찡그리기",
@@ -180,7 +180,7 @@ function generateSummaryFeedback(avgScore, usedMusclesCount) {
     lines.push("다음에는 더 다양한 근육들을 운동해 보아요! 💪");
   }
 
-  if (avgScore >= 0.7) {
+  if (avgScore >= 0.8) {
     lines.push("선생님의 사진을 매우 잘 따라했습니다. 👍");
   } else {
     lines.push("다음에는 선생님을 더 비슷하게 따라해 보아요! 😊");
@@ -385,7 +385,6 @@ export async function init() {
         exprList.appendChild(li);
       }
     });
-
     
       analyzeBtn.textContent = "분석 완료 ✅";
     } catch (err) {
