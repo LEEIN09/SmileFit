@@ -165,6 +165,19 @@ def video_feed():
         response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
         return response
     return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+# ==================================================
+# 👇 타워 디펜스 게임 페이지 추가
+# ==================================================
+@app.route('/play_tower_defense')
+def play_tower_page():
+    # URL에서 'mode' 파라미터 가져오기, 없으면 'default_mode' 사용
+    selected_mode = request.args.get('mode', 'default_mode')
+
+    # 'tower_defense_game.html' 템플릿을 렌더링하면서 current_game_mode 변수로 mode 값 전달
+    return render_template('tower_defense_game.html', current_game_mode=selected_mode)
+# ==================================================
+# 게임 페이지 추가 완료 
+# ==================================================
 
 # --- 사용자별 임시 데이터 저장을 위한 전역 딕셔너리 (메모리 기반) ---
 user_session_data = {} 
