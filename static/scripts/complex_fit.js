@@ -75,7 +75,7 @@ function updateReferenceImage() {
     const dataUrl = captureCurrentFrame();
 
     if (currentRound === 0) {
-      neutralImage = dataUrl; // ⭐️ 무표정 저장
+      neutralImage = dataUrl; 
       currentRound++;
       updateReferenceImage();
       return;

@@ -1,4 +1,4 @@
-const CACHE_NAME = "smilefit-cache-v2";  // ✅ 버전 변경 중요!
+const CACHE_NAME = "smilefit-cache-v3";  // ✅ 버전 변경 중요!
 const urlsToCache = [
   "/",
   "/manifest.json",

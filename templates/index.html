@@ -259,7 +259,7 @@
           document.getElementById('app').innerHTML = temp.innerHTML;
 
           try {
-            const version = "1.0.3";
+            const version = "1.0.4";
             const module = await import(`/scripts/${route}.js?v=${version}`);
             currentModule = module;
             console.log("📦 모듈 import 성공:", route);

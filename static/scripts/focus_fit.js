@@ -6,7 +6,7 @@ export function init() {
   const video = document.getElementById('video');
   const canvas = document.getElementById('guide-canvas');
   const ctx = canvas.getContext('2d');
-  const referenceImg = document.getElementById('reference-img');
+  // const referenceImg = document.getElementById('reference-img');
   const roundText = document.getElementById('round');
   const checkMark = document.getElementById('check-mark');
   const submitBtn = document.getElementById('submit-btn');
@@ -43,6 +43,8 @@ export function init() {
   setInterval(drawEllipse, 100);
 
   function updateReferenceImage() {
+    const referenceImg = document.getElementById('reference-img');
+
     if (currentRound === 0) {
       referenceImg.style.display = "none";
       refMessage.style.display = "block";

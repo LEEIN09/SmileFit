@@ -47,9 +47,9 @@ const EXERCISE_KOR_NAMES = {
 };
 
 const MUSCLE_KOR_NAMES = {
-  "전두근": "전두근(안쪽),전두근(가쪽),상암검거근,상검판근",  
-  "안륜근": "안륜근(안와부),안륜근(안검부),(상안검거근(이완)",    
-  "대관골근": "대관골근,구각거근",
+  "전두근": "1.전두근,2.상암검거근,3.상검판근",  
+  "안륜근": "1-1.안륜근(안와부),1-2.안륜근(안검부),2.상안검거근(이완)",    
+  "대관골근": "1.대관골근,2.구각거근",
 };
 
 function renderExerciseInfo(selectedExercise) {
@@ -61,7 +61,7 @@ function renderExerciseInfo(selectedExercise) {
     .join("<br><br>");
   const html = `
     <div style="font-size: 20px; line-height: 1.6;">
-        <strong>동작명:</strong> ${korName}<br><br>
+        <strong>동작명:</strong>&nbsp; ${korName}<br><br>
         <strong>목표 근육:</strong><br>${muscles}
     </div>
     `;
@@ -328,7 +328,11 @@ function renderVerticalBarChart(id, labels, data) {
 
 export async function init() {
   document.body.classList.add("loaded");
+
   document.getElementById("analyze-btn").addEventListener("click", async () => {
+    const analyzeBtn = document.getElementById("analyze-btn");
+    analyzeBtn.disabled = true;
+    analyzeBtn.textContent = "분석 중...";
 
     const today = new Date().toLocaleDateString("ko-KR");
     const name = document.getElementById("user-name")?.value.trim() || "";
@@ -372,5 +376,8 @@ export async function init() {
     document.getElementById("report-date").textContent =
       name ? `${today} - ${name}` : today;
     document.getElementById("report").style.display = "block";
+
+    analyzeBtn.textContent = "분석 완료 ✅";
+    analyzeBtn.disabled = true;
   });
 }
