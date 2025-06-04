@@ -6,12 +6,12 @@ const MAX_CHANGES = {
   "안륜근(좌)": 0.047,
   "안륜근(우)": 0.047,
   "추미근": 0.072,
-  "콧방울올림근": 0.143,
+  "상순비익거근": 0.143,
   "대관골근(좌)": 0.048,
   "대관골근(우)": 0.048,
   "익돌근": 0.09,
-  "구륜근": 0.017,
-  "볼근": 0.017,
+  "상순절치근": 0.017,
+  "협근": 0.017,
 };
 
 const MUSCLE_RULES = {
@@ -20,12 +20,12 @@ const MUSCLE_RULES = {
   "안륜근(우)": { points: [386, 374], direction: "decrease" },
   "안륜근(좌)": { points: [159, 145], direction: "decrease" },
   "추미근": { points: [107, 336], direction: "decrease" },
-  "콧방울올림근": { points: [285, 437], direction: "decrease" },
+  "상순비익거근": { points: [285, 437], direction: "decrease" },
   "대관골근(우)": { points: [291, 446], direction: "decrease" },
   "대관골근(좌)": { points: [61, 226], direction: "decrease" },
   "익돌근": { points: [1, 152], direction: "increase" },
-  "구륜근": { points: [61, 291], direction: "decrease" },
-  "볼근": { points: [61, 291], direction: "increase", stable: [13, 14] }
+  "상순절치근": { points: [61, 291], direction: "decrease" },
+  "협근": { points: [61, 291], direction: "increase", stable: [13, 14] }
 };
 
 const EXERCISE_TARGET_MUSCLES = {
@@ -33,6 +33,40 @@ const EXERCISE_TARGET_MUSCLES = {
   "eye_close": ["안륜근(좌)", "안륜근(우)"],
   "smile": ["대관골근(좌)", "대관골근(우)"],
 };
+
+const EXERCISE_TARGET_MUSCLES2 = {
+  "eyebrow_raise": ["전두근"],
+  "eye_close": ["안륜근"],
+  "smile": ["대관골근"]
+};
+
+const EXERCISE_KOR_NAMES = {
+  "eyebrow_raise": "눈썹 올리기",
+  "eye_close": "눈 꼭 감기",
+  "smile": "미소 짓기",
+};
+
+const MUSCLE_KOR_NAMES = {
+  "전두근": "전두근(안쪽),전두근(가쪽),상암검거근,상검판근",  
+  "안륜근": "안륜근(안와부),안륜근(안검부),(상안검거근(이완)",    
+  "대관골근": "대관골근,구각거근",
+};
+
+function renderExerciseInfo(selectedExercise) {
+  const korName = EXERCISE_KOR_NAMES[selectedExercise] || selectedExercise;
+  const targets = EXERCISE_TARGET_MUSCLES2[selectedExercise] || [];
+
+  const muscles = targets
+    .map(m => (MUSCLE_KOR_NAMES[m] || m).split(",").join("<br>"))
+    .join("<br><br>");
+  const html = `
+    <div style="font-size: 20px; line-height: 1.6;">
+        <strong>동작명:</strong> ${korName}<br><br>
+        <strong>목표 근육:</strong><br>${muscles}
+    </div>
+    `;
+  document.getElementById("exercise-info").innerHTML = html;
+}
 
 let faceMeshInstance = null;
 
@@ -160,6 +194,8 @@ function calculateExpressionConsistency(expressionLandmarksList, neutralLandmark
 
   const rawScore = Math.min(avgVar * 10000, 100);  // 0~100
   const consistencyScore = 100 - rawScore;
+
+  return Math.round(consistencyScore);
 }
 
 function variance(arr) {
@@ -293,6 +329,10 @@ function renderVerticalBarChart(id, labels, data) {
 export async function init() {
   document.body.classList.add("loaded");
   document.getElementById("analyze-btn").addEventListener("click", async () => {
+
+    const today = new Date().toLocaleDateString("ko-KR");
+    const name = document.getElementById("user-name")?.value.trim() || "";
+
     const selectedExercise = sessionStorage.getItem("selectedExercise");
     const userNeutral = JSON.parse(sessionStorage.getItem("neutralImage"));
     const userImages = JSON.parse(sessionStorage.getItem("capturedImages"));
@@ -308,11 +348,12 @@ export async function init() {
     const feedback = generateFeedback(symmetry.diff, activation);
     const bestIdx = findBestPhoto(exprLmks, neutralLmk, selectedExercise);
 
+    renderExerciseInfo(selectedExercise);
     renderBarChart("symmetryChart", ["좌측", "우측"], [symmetry.left, symmetry.right]);
     renderBarChart("consistencyChart", ["일관성"], [consistency]);
     renderBarChart("activationChart", ["목표근육 활성율"], [activation]);
     renderVerticalBarChart("top5Chart", top5.map(m => m[0]), top5.map(m => m[1]));
-
+    
     document.getElementById("summary-text").innerHTML = feedback;
 
     const refImg = `/static/images/expression/${selectedExercise}/${bestIdx + 1}.png`;
@@ -320,15 +361,16 @@ export async function init() {
     document.getElementById("ref-photo").src = refImg;
     document.getElementById("best-photo").src = userImg;
 
-    for (let i = 1; i <= 3; i++) {
+    for (let i = 1; i <= 2; i++) {
       const img = document.createElement("img");
       img.src = `/static/images/muscles/${selectedExercise}/m${i}.png`;
-      img.style.width = "80px";
+      img.style.width = "200px";
       img.style.margin = "4px";
       document.getElementById("muscle-image-box").appendChild(img);
     }
 
-    document.getElementById("report-date").textContent = new Date().toLocaleDateString("ko-KR");
+    document.getElementById("report-date").textContent =
+      name ? `${today} - ${name}` : today;
     document.getElementById("report").style.display = "block";
   });
 }

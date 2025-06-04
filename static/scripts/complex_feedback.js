@@ -8,22 +8,22 @@ const MAX_CHANGES = {
   "전두근": 0.136,
   "안륜근": 0.047,
   "추미근": 0.072,
-  "콧방울올림근": 0.143,
+  "상순비익거근": 0.143,
   "대관골근": 0.048,
   "익돌근": 0.09,
-  "구륜근": 0.017,
-  "볼근": 0.017,
+  "상순절치근": 0.017,
+  "협근": 0.017,
 };
 
 const MUSCLE_TO_ACTION = {
   "전두근": "눈썹 올리기",
-  "안륜근": "눈 작게 뜨기",
+  "안륜근": "눈 강하게 감기",
   "추미근": "미간 조이기",
-  "콧방울올림근": "찡그리기",
+  "상순비익거근": "찡그리기",
   "대관골근": "입꼬리 올리기",
   "익돌근": "입 벌리기",
-  "구륜근": "입술 오므리기",
-  "볼근": "보조개 만들기"
+  "상순절치근": "입술 오므리기",
+  "협근": "보조개 만들기"
 };
 
 // 근육별 제어 기준 정의
@@ -31,11 +31,11 @@ const MUSCLE_RULES = {
   "전두근": { points: [334, 386], direction: "increase" },
   "안륜근": { points: [386, 374], direction: "decrease" },
   "추미근": { points: [107, 336], direction: "decrease" },
-  "콧방울올림근": { points: [285, 437], direction: "decrease" },
+  "상순비익거근": { points: [285, 437], direction: "decrease" },
   "대관골근": { points: [291, 446], direction: "decrease" },
   "익돌근": { points: [1, 152], direction: "increase" },
-  "구륜근": { points: [61, 291], direction: "decrease" },
-  "볼근": { points: [61, 291], direction: "increase", stable: [13, 14] }  // AND 조건
+  "상순절치근": { points: [61, 291], direction: "decrease" },
+  "협근": { points: [61, 291], direction: "increase", stable: [13, 14] }  // AND 조건
 };
 
 let faceMeshInstance = null;
