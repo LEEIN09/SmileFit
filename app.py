@@ -4,6 +4,8 @@ import numpy as np
 import uuid
 import os
 import sys
+import google.generativeai as genai
+
 from datetime import datetime
 # Response는 Flask에서 직접 임포트해야 합니다.
 from flask import Flask, render_template, request, jsonify, Response, session, redirect, url_for # Response 임포트 추가
@@ -14,6 +16,7 @@ from urllib.parse import urlparse
 import pandas as pd 
 
 import tensorflow as tf
+import keras
 from tensorflow.keras.models import load_model
 
 import firebase_admin
@@ -216,6 +219,20 @@ def generate_frames():
 def index(): return render_template('index.html')
 @app.route('/game_mode')
 def game_mode(): return render_template('game_mode.html')
+# ==================================================
+#  towerdefensegame html 추가 
+# ==================================================
+@app.route('/play_tower_defense')
+def play_tower_page():
+    # URL에서 'mode' 파라미터 가져오기, 없으면 'default_mode' 사용
+    selected_mode = request.args.get('mode', 'default_mode')
+
+    # 'tower_defense_game.html' 템플릿을 렌더링하면서 current_game_mode 변수로 mode 값 전달
+    return render_template('tower_defense_game.html', current_game_mode=selected_mode)
+# ==================================================
+#  추가 완료
+# ==================================================
+
 @app.route('/rehab_mode')
 def rehab_mode(): return render_template('rehab_mode.html')
 @app.route('/focus')
