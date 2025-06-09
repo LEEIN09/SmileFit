@@ -18,4 +18,4 @@ serviceAccountKey.json # 서비스 계정 키 파일 (매우 민감한 정보)
 
 # Unity game files (GitHub 100MB 파일 크기 제한 초과 및 배포에 불필요)
 # 이전에 문제가 된 파일을 확실히 제외
-static/unity_game_files/
+static/unity_game_files/Build/towerdefense.data
