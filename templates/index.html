@@ -9,6 +9,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
   <title>홈 | 안면근육 재활</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=SUIT:wght@400;600&display=swap" rel="stylesheet">
@@ -16,12 +17,22 @@
   body {
     margin: 0;
     padding: 0;
-    height: 100dvh; 
+    height: 100dvh;
     font-family: 'SUIT', sans-serif;
     background-color: white;
     color: #333;
     display: flex;
     flex-direction: column;
+    opacity: 0; /* 초기에는 숨김 (스크립트로 loaded 클래스 추가 시 표시) */
+    transition: opacity 0.4s ease-in-out; /* 부드러운 전환 효과 */
+  }
+
+  body.loaded {
+    opacity: 1;
+  }
+
+  body.fade-out {
+    opacity: 0;
   }
 
   header {
@@ -45,54 +56,65 @@
     align-items: center;
     justify-content: center;
     padding-bottom: 0;
+    margin-top: 0; /* 기본 마진 제거 */
+    margin-bottom: 1vh; /* 버튼 그룹과의 간격 조정 */
   }
 
   .button-group {
-    height: 72vh;
+    /* height: 72vh; */ /* 내용에 따라 유동적으로 변경되도록 height 제거 또는 min-height 사용 고려 */
+    flex-grow: 1; /* 남은 공간을 채우도록 설정 */
     display: flex;
     flex-direction: row;
     justify-content: center;
-    align-items: flex-start;
+    align-items: center; /* 수직 중앙 정렬 개선 */
     gap: 40px;
-    margin-bottom: 6vh;
+    /* margin-bottom: 6vh; */ /* body에 flex-direction: column 이므로 필요 없을 수 있음 */
+    padding: 0 20px; /* 좌우 패딩 추가 */
   }
 
   .mode-box {
     width: 40vw;
-    height: 60vh;
+    max-width: 300px; /* 최대 너비 설정 */
+    height: auto; /* 내용에 맞게 높이 자동 조절 */
+    min-height: 50vh; /* 최소 높이 설정 */
     border-radius: 16px;
     overflow: hidden;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: space-around; /* 내부 요소 간격 균등하게 */
     align-items: center;
-    padding: 4vh;
+    padding: 3vh 2vh; /* 패딩 조정 */
     box-sizing: border-box;
-    gap: 3vh;
+    gap: 2vh; /* 내부 요소 간 간격 */
   }
 
   .mode-box img {
-    width: 100%;
-    height: 80%;
-    object-fit: cover;
+    width: 80%; /* 이미지 크기 조정 */
+    max-height: 50%; /* 이미지 최대 높이 제한 */
+    object-fit: contain; /* 이미지가 잘리지 않도록 contain으로 변경 */
     display: block;
   }
 
   .mode-box button {
-    width: 60%;
-    padding: 10px;
+    width: 70%; /* 버튼 너비 조정 */
+    padding: 12px; /* 버튼 패딩 증가 */
     font-size: 16px;
     font-weight: bold;
     color: white;
     border: none;
     border-radius: 8px;
     cursor: pointer;
+    transition: background-color 0.3s ease; /* 호버 효과 */
+  }
+
+  .mode-box button:hover {
+    filter: brightness(1.1);
   }
 
   .mode-left {
-    background: 
-      linear-gradient(rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.5)), 
+    background:
+      linear-gradient(rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.5)),
       url('static/images/space.png');
     background-size: cover;
     background-position: center;
@@ -103,8 +125,8 @@
   }
 
   .mode-right {
-    background: 
-      linear-gradient(rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.5)), 
+    background:
+      linear-gradient(rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.5)),
       url('static/images/grass.png');
     background-size: cover;
     background-position: center;
@@ -130,167 +152,232 @@
   }
 
   /* 💻 데스크탑 대응 */
-  @media screen and (min-width: 1024px), (hover: hover) and (pointer: fine) {
+  @media screen and (min-width: 768px) { /* 반응형 기준점 변경 */
     header {
       height: 100px;
       font-size: 28px;
     }
 
     h2 {
-      height: 100px;
+      height: auto; /* 내용에 맞게 */
+      padding: 20px 0; /* 상하 패딩 */
       font-size: 26px;
+      margin-bottom: 20px;
     }
 
     .button-group {
-      height: 60vh;
-      margin-top: 20px;
-      margin-bottom: 20px;
-      gap: 100px;
+      gap: 60px; /* 데스크탑에서 간격 증가 */
+      align-items: flex-start; /* 상단 정렬 */
     }
 
     .mode-box {
-      width: 400px;
-      height: 350px;
-      padding: 20px;
-      gap: 20px;
+      width: 350px; /* 너비 고정값 사용 */
+      min-height: 400px; /* 데스크탑 최소 높이 */
+      padding: 30px;
+      gap: 30px;
+    }
+    .mode-box img {
+      width: 90%;
+      max-height: 200px; /* 데스크탑 이미지 높이 제한 */
     }
 
     .mode-box button {
-      font-size: 22px;
-      padding: 10px;
+      font-size: 20px; /* 버튼 폰트 크기 증가 */
+      padding: 15px;
+      width: 60%;
     }
 
     .home-button {
-      position: fixed;
       top: 24px;
       left: 24px;
-      background: #ff4081;
-      color: white;
       padding: 8px 16px;
-      font-weight: bold;
-      border-radius: 6px;
-      box-shadow: 0 0 8px #ff4081;
-      z-index: 999;
-      text-decoration: none;
       font-size: 20px;
     }
   }
 </style>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
-  <audio id="metal_click" src="/static/sounds/metal_click.mp3"></audio>
-  <audio id="click_sound" src="/static/sounds/click_sound.wav"></audio>
+  <audio id="metal_click" src="/static/sounds/metal_click.mp3" preload="auto"></audio>
+  <audio id="click_sound" src="/static/sounds/click_sound.wav" preload="auto"></audio>
 
   <div id="app">
-    <header>SMILE FIT</header>
-    <h2>원하는 모드를 선택하세요</h2>
-    <div class="button-group">
-      <div class="mode-box mode-left">
-        <img src="static/images/game.png" alt="게임 모드 이미지">
-        <button onclick="metalClickSound(); loadPage('game_mode')">게임 모드</button>
-      </div>
-      <div class="mode-box mode-right">
-        <img src="static/images/rehab.png" alt="재활 모드 이미지">
-        <button onclick="ClickSound(); loadPage('rehab_mode')">재활 모드</button>
-      </div>
     </div>
-  </div>
 
-<a href="#" class="home-button" onclick="loadPage('index'); return false;">HOME</a>
+  <a href="#" class="home-button" onclick="loadPage('index'); return false;">HOME</a>
 
   <script>
+    // 페이지 로드 시 초기 페이지 로드 및 body loaded 클래스 추가
     window.addEventListener('DOMContentLoaded', () => {
-      document.body.classList.add('loaded');
-      loadPage('index');
+      // 초기 페이지를 'index'로 설정 (또는 다른 기본 페이지)
+      // loadPage 함수가 정의된 후에 호출해야 하므로, 아래로 옮기거나 즉시 실행 함수로 감쌀 수 있습니다.
+      // 여기서는 loadPage 정의 후 마지막에 호출하겠습니다.
     });
 
     function metalClickSound() {
       const sound = document.getElementById('metal_click');
-      sound.currentTime = 0;
-      sound.play();
+      if (sound) {
+        sound.currentTime = 0;
+        sound.play().catch(e => console.warn("소리 재생 오류(metal_click):", e));
+      }
     }
 
     function ClickSound() {
       const sound = document.getElementById('click_sound');
-      sound.currentTime = 0;
-      sound.play();
+      if (sound) {
+        sound.currentTime = 0;
+        sound.play().catch(e => console.warn("소리 재생 오류(click_sound):", e));
+      }
     }
 
+    // 페이지 라우팅 정보
     const routes = {
-      'index': '/pages/index.html',
+      'index': '/pages/index.html', // 홈페이지 콘텐츠
       'game_follow': '/pages/game_follow.html',
       'game_mode': '/pages/game_mode.html',
       'game_emotion': '/pages/game_emotion.html',
       'rehab_mode': '/pages/rehab_mode.html',
-      'complex': '/pages/complex.html',
-      'complex_fit': '/pages/complex_fit.html',
+      'complex': '/pages/complex.html', // 선생님 선택 페이지
+      'complex_fit': '/pages/complex_fit.html', // 복합 운동 페이지
       'focus': '/pages/focus.html',
       'focus_fit': '/pages/focus_fit.html',
-      'complex_feedback': '/pages/complex_feedback.html',
+      'complex_feedback': '/pages/complex_feedback.html', // 복합 운동 피드백
       'focus_feedback': '/pages/focus_feedback.html',
+      'next_set_guidance': '/pages/next_set_guidance.html', // AU 모드 세트 중간 안내
       'face_emotion': '/tower_defense_game.html?mode=emotion_expression',
       'face_follow': '/tower_defense_game.html?mode=follow_expression'
     };
 
-    let currentModule = null;
-    const pageCache = new Map();
+    let currentModule = null; // 현재 로드된 페이지의 JS 모듈 참조
+    const pageCache = new Map(); // HTML 콘텐츠 캐시
 
-async function loadPage(route) {
-  const path = routes[route];
-  if (!path) return;
-
-  // ✅ 기존 페이지 전환 로직 유지
-  if (currentModule?.cleanup) currentModule.cleanup();
-  document.body.classList.remove('loaded');
-  document.body.classList.add('fade-out');
-
-  if (!route.startsWith("face_")) {
-    try {
-      const version = "1.0.4";
-      const module = await import(`/scripts/${route}.js?v=${version}`);
-      currentModule = module;
-      if (module?.init) module.init();
-    } catch (e) {
-      console.warn(`⚠️ ${route}.js 없음 또는 import 실패`, e);
-    }
-  }
-
-  setTimeout(async () => {
-    try {
-      let html;
-      if (pageCache.has(route)) {
-        html = pageCache.get(route);
-      } else {
-        const res = await fetch(path);
-        html = await res.text();
-        pageCache.set(route, html);
+    async function loadPage(routeKey) {
+      const path = routes[routeKey];
+      if (!path) {
+        console.error(`라우트를 찾을 수 없습니다: ${routeKey}`);
+        return;
       }
 
-      const temp = document.createElement('div');
-      temp.innerHTML = html;
-      document.getElementById('app').innerHTML = temp.innerHTML;
+      // --- 로깅 추가 ---
+      console.log(`[loadPage START ${routeKey}] Page load initiated at ${new Date().toISOString()}`);
+      console.time(`[loadPage DURATION ${routeKey}]`); // 전체 로드 시간 측정 시작
 
-      try {
-        const version = "1.0.4";
-        const module = await import(`/scripts/${route}.js?v=${version}`);
-        currentModule = module;
-        if (module?.init) module.init();
-      } catch (e) {
-        console.warn(`⚠️ ${route}.js 없음 또는 import 실패`, e);
+      // 이전 모듈의 cleanup 함수 호출 (존재한다면)
+      if (currentModule && typeof currentModule.cleanup === 'function') {
+        try {
+          // --- 로깅 추가 ---
+          console.log(`[loadPage ${routeKey}] Previous module (${currentModule.routeName || 'unknown'}) cleanup function calling at ${new Date().toISOString()}`);
+          currentModule.cleanup();
+          console.log(`[loadPage ${routeKey}] Previous module cleanup completed at ${new Date().toISOString()}`);
+        } catch (e) {
+          console.error(`[loadPage ${routeKey}] Error during previous module cleanup:`, e);
+        }
       }
+      currentModule = null; // 이전 모듈 참조 제거
 
-      document.body.classList.remove('fade-out');
-      document.body.classList.add('loaded');
-    } catch (e) {
-      console.error('❌ 페이지 로딩 실패:', e);
+      // 페이지 전환 시각 효과
+      document.body.classList.remove('loaded');
+      document.body.classList.add('fade-out');
+      // --- 로깅 추가 ---
+      console.log(`[loadPage ${routeKey}] Body fade-out initiated at ${new Date().toISOString()}`);
+
+
+      // 애니메이션 시간(400ms) 후 HTML 로드 및 스크립트 초기화
+      setTimeout(async () => {
+        // --- 로깅 추가 ---
+        console.log(`[loadPage ${routeKey}] setTimeout callback fired (after 400ms animation) at ${new Date().toISOString()}`);
+        try {
+          let htmlContent;
+          // --- 로깅 추가 ---
+          console.time(`[loadPage HTML_FETCH ${routeKey}]`);
+          if (pageCache.has(routeKey)) {
+            htmlContent = pageCache.get(routeKey);
+            console.log(`[loadPage ${routeKey}] HTML loaded from cache at ${new Date().toISOString()}`);
+          } else {
+            console.log(`[loadPage ${routeKey}] Fetching HTML from server: ${path} at ${new Date().toISOString()}`);
+            const response = await fetch(path);
+            if (!response.ok) {
+              throw new Error(`HTTP 오류 ${response.status}: ${path} 파일을 가져올 수 없습니다.`);
+            }
+            htmlContent = await response.text();
+            pageCache.set(routeKey, htmlContent);
+            console.log(`[loadPage ${routeKey}] HTML fetched from server and cached at ${new Date().toISOString()}`);
+          }
+          console.timeEnd(`[loadPage HTML_FETCH ${routeKey}]`);
+
+          const appContainer = document.getElementById('app');
+          if (!appContainer) {
+            console.error(`[loadPage ${routeKey}] CRITICAL: 'app' container element not found! at ${new Date().toISOString()}`);
+            document.body.classList.remove('fade-out');
+            document.body.classList.add('loaded');
+            return;
+          }
+          // --- 로깅 추가 ---
+          console.log(`[loadPage ${routeKey}] Setting appContainer.innerHTML at ${new Date().toISOString()}`);
+          appContainer.innerHTML = htmlContent; // 새 HTML 콘텐츠 삽입
+          console.log(`[loadPage ${routeKey}] appContainer.innerHTML set. DOM update process should be starting at ${new Date().toISOString()}`);
+
+
+          if (!routeKey.startsWith("face_")) {
+            try {
+              const version = new Date().getTime();
+              const modulePath = `/scripts/${routeKey}.js?v=${version}`;
+              // --- 로깅 추가 ---
+              console.log(`[loadPage ${routeKey}] Attempting to import module: ${modulePath} at ${new Date().toISOString()}`);
+              console.time(`[loadPage MODULE_IMPORT ${routeKey}]`);
+              const module = await import(modulePath);
+              console.timeEnd(`[loadPage MODULE_IMPORT ${routeKey}]`);
+              console.log(`[loadPage ${routeKey}] Module imported: ${modulePath} at ${new Date().toISOString()}`, module);
+
+              currentModule = module;
+              currentModule.routeName = routeKey;
+
+              if (module && typeof module.init === 'function') {
+                // --- 로깅 추가 ---
+                console.log(`[loadPage ${routeKey}] Module has init function. Scheduling with requestAnimationFrame at ${new Date().toISOString()}`);
+                requestAnimationFrame(() => {
+                  try {
+                    // --- 로깅 추가 ---
+                    console.log(`[loadPage ${routeKey} - rAF] requestAnimationFrame callback fired for init() at ${new Date().toISOString()}`);
+                    console.time(`[loadPage INIT_EXECUTION ${routeKey}]`);
+                    module.init();
+                    console.timeEnd(`[loadPage INIT_EXECUTION ${routeKey}]`);
+                    console.log(`[loadPage ${routeKey} - rAF] module.init() execution finished at ${new Date().toISOString()}`);
+                  } catch (e) {
+                    console.error(`[loadPage ${routeKey} - rAF] Error during module.init() execution:`, e);
+                  }
+                });
+              } else {
+                console.warn(`[loadPage ${routeKey}] ⚠️ Module or its init function is problematic or missing at ${new Date().toISOString()}`);
+              }
+            } catch (e) {
+              console.warn(`[loadPage ${routeKey}] ⚠️ Failed to load or execute module ${routeKey}.js:`, e, `at ${new Date().toISOString()}`);
+            }
+          } else {
+            console.log(`[loadPage ${routeKey}] Route starts with "face_", skipping JS module load. at ${new Date().toISOString()}`);
+          }
+
+          document.body.classList.remove('fade-out');
+          document.body.classList.add('loaded');
+          // --- 로깅 추가 ---
+          console.log(`[loadPage ${routeKey}] Body fade-in completed at ${new Date().toISOString()}`);
+
+        } catch (error) {
+          console.error(`[loadPage ${routeKey}] ❌ CRITICAL error during page loading or initialization:`, error, `at ${new Date().toISOString()}`);
+          document.body.classList.remove('fade-out');
+          document.body.classList.add('loaded');
+          const appContainer = document.getElementById('app');
+          if (appContainer) {
+            appContainer.innerHTML = `<p style="color:red; text-align:center; padding:20px;">페이지 로딩에 실패했습니다. 콘솔을 확인해주세요.</p>`;
+          }
+        } finally {
+          // --- 로깅 추가 ---
+          console.timeEnd(`[loadPage DURATION ${routeKey}]`); // 전체 로드 시간 측정 종료
+          console.log(`[loadPage END ${routeKey}] Page load process finished at ${new Date().toISOString()}`);
+        }
+      }, 400);
     }
-  }, 400);
-}
 
-
-
-
+    // 서비스 워커 등록
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
         navigator.serviceWorker
@@ -299,10 +386,12 @@ async function loadPage(route) {
           .catch((err) => console.error("❌ Service Worker registration failed:", err));
       });
     }
+
+    // DOMContentLoaded 후 초기 페이지 로드
+    window.addEventListener('DOMContentLoaded', () => {
+      console.log(`[DOMContentLoaded] Event fired at ${new Date().toISOString()}`);
+      loadPage('index');
+    });
   </script>
- 
-  
-
-
 </body>
 </html>
